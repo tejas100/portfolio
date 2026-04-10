@@ -1,0 +1,1306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tejas BK</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@300;400;500&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f7f4ef;
+      --ink: #1a1814;
+      --mid: #6e6a63;
+      --faint: #e2ddd7;
+      --accent: #c0392b;
+      --accent-light: #f5ebe9;
+      --max-w: 680px;
+      --serif: 'EB Garamond', Georgia, serif;
+      --mono: 'JetBrains Mono', monospace;
+      --sans: 'Outfit', sans-serif;
+      --header-h: 0px; /* set by JS */
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--sans);
+      font-weight: 300;
+      line-height: 1.75;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ─── NOISE TEXTURE ─── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── FIXED HEADER ─── */
+    .site-header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      /* No background here — visual background is on header-inner */
+    }
+
+    .header-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 2.6rem 1.5rem 1.4rem;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 1.5rem;
+      align-items: center;
+      background: rgba(247, 244, 239, 0.93);
+      backdrop-filter: blur(18px) saturate(1.4);
+      -webkit-backdrop-filter: blur(18px) saturate(1.4);
+      transition: box-shadow 0.3s ease;
+    }
+
+
+
+    .header-left {}
+
+    .bio-title {
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--accent);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      margin-bottom: 0.3rem;
+    }
+
+    .bio-name {
+      font-family: var(--serif);
+      font-size: 1.55rem;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      margin-bottom: 0.5rem;
+      line-height: 1.2;
+    }
+
+    .bio-text {
+      font-size: 0.84rem;
+      color: var(--mid);
+      line-height: 1.7;
+      max-width: 46ch;
+    }
+
+    .bio-text a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(192,57,43,0.3);
+    }
+
+    .bio-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem 1.2rem;
+      margin-top: 0.9rem;
+    }
+
+    .bio-link {
+      font-family: var(--mono);
+      font-size: 0.63rem;
+      color: var(--mid);
+      text-decoration: none;
+      letter-spacing: 0.06em;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: color 0.15s;
+    }
+
+    .bio-link:hover { color: var(--accent); }
+
+    /* ─── PHOTO + TOGGLE COLUMN ─── */
+    .header-right {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .bio-photo {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2.5px solid var(--faint);
+      display: block;
+      transition: border-color 0.3s;
+    }
+
+    .bio-photo:hover { border-color: var(--accent); }
+
+    /* ─── REGAL TOGGLE BAR ─── */
+    .toggle-bar {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 0.75rem 1.5rem 0.9rem;
+      border-top: 1px solid var(--faint);
+    }
+
+    .toggle-ornament {
+      color: var(--accent);
+      opacity: 0.5;
+      font-size: 0.7rem;
+      line-height: 1;
+      user-select: none;
+      margin: 0 0.6rem;
+    }
+
+    .regal-toggle {
+      display: flex;
+      align-items: center;
+      background: rgba(0,0,0,0.04);
+      border: 1px solid var(--faint);
+      border-radius: 100px;
+      padding: 4px;
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      gap: 0;
+    }
+
+    .regal-pill {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      height: calc(100% - 8px);
+      background: var(--ink);
+      border-radius: 100px;
+      transition: transform 0.42s cubic-bezier(0.34, 1.56, 0.64, 1), width 0.1s;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .regal-label {
+      position: relative;
+      z-index: 2;
+      font-family: var(--serif);
+      font-size: 0.78rem;
+      letter-spacing: 0.03em;
+      padding: 0.2rem 0.85rem;
+      color: var(--mid);
+      transition: color 0.25s ease;
+      white-space: nowrap;
+      border-radius: 100px;
+    }
+
+    .regal-toggle:not(.is-personal) .regal-label:first-of-type,
+    .regal-toggle.is-personal .regal-label:last-of-type {
+      color: var(--bg);
+    }
+
+    /* ─── SCROLLABLE CONTENT ─── */
+    .scroll-body {
+      position: relative;
+      z-index: 1;
+      padding-top: calc(var(--header-h) + 2.5rem);
+      padding-bottom: 6rem;
+    }
+
+    .page-inner {
+      max-width: var(--max-w);
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* ─── CONTENT PANELS ─── */
+    .content-panel {
+      position: relative;
+    }
+
+    .content-view {
+      transition: opacity 0.5s cubic-bezier(0.4,0,0.2,1),
+                  transform 0.5s cubic-bezier(0.4,0,0.2,1),
+                  filter 0.5s ease;
+    }
+
+    .content-view.hidden {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      opacity: 0;
+      transform: translateY(16px);
+      filter: blur(4px);
+      pointer-events: none;
+    }
+
+    .content-view.visible {
+      opacity: 1;
+      transform: none;
+      filter: none;
+    }
+
+    /* ─── SECTION ─── */
+    .section { margin-bottom: 3rem; }
+
+    .section-label {
+      font-family: var(--mono);
+      font-size: 0.67rem;
+      color: var(--accent);
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      margin-bottom: 1.35rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--faint);
+    }
+
+    /* ─── UPDATES ─── */
+    .updates { display: flex; flex-direction: column; gap: 0.65rem; }
+
+    .update-row {
+      display: grid;
+      grid-template-columns: 76px 1fr;
+      gap: 1rem;
+      font-size: 0.88rem;
+      line-height: 1.6;
+    }
+
+    .update-date {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--mid);
+      padding-top: 0.12rem;
+    }
+
+    .update-text strong { font-weight: 500; }
+
+    .badge {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      background: var(--accent-light);
+      color: var(--accent);
+      padding: 0.1rem 0.45rem;
+      border-radius: 2px;
+      vertical-align: middle;
+      margin-left: 0.35rem;
+    }
+
+    /* ─── PUBLICATIONS ─── */
+    .pub-list { display: flex; flex-direction: column; gap: 1.75rem; }
+
+    .pub {
+      display: grid;
+      grid-template-columns: 26px 1fr;
+      gap: 0.75rem;
+    }
+
+    .pub-num {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 0.88rem;
+      color: var(--mid);
+      padding-top: 0.12rem;
+    }
+
+    .pub-venue {
+      font-family: var(--mono);
+      font-size: 0.63rem;
+      color: var(--accent);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
+    }
+
+    .pub-title {
+      font-family: var(--serif);
+      font-size: 0.97rem;
+      font-weight: 500;
+      line-height: 1.4;
+      margin-bottom: 0.35rem;
+    }
+
+    .pub-desc {
+      font-size: 0.83rem;
+      color: var(--mid);
+      line-height: 1.65;
+      margin-bottom: 0.6rem;
+    }
+
+    .tags { display: flex; flex-wrap: wrap; gap: 0.35rem; }
+
+    .tag {
+      font-family: var(--mono);
+      font-size: 0.61rem;
+      color: var(--mid);
+      background: var(--faint);
+      padding: 0.12rem 0.5rem;
+      letter-spacing: 0.04em;
+    }
+
+    /* ─── EXPERIENCE ─── */
+    .exp-list { display: flex; flex-direction: column; gap: 1.5rem; }
+
+    .exp { display: grid; grid-template-columns: 1fr auto; gap: 0.5rem; align-items: start; }
+
+    .exp-role { font-weight: 500; font-size: 0.95rem; margin-bottom: 0.1rem; }
+
+    .exp-org {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+    }
+
+    .exp-period {
+      font-family: var(--mono);
+      font-size: 0.67rem;
+      color: var(--mid);
+      white-space: nowrap;
+      padding-top: 0.25rem;
+    }
+
+    .exp-detail {
+      grid-column: 1 / -1;
+      font-size: 0.85rem;
+      color: var(--mid);
+      line-height: 1.7;
+      margin-top: 0.3rem;
+    }
+
+    /* ─── PROJECT TILES ─── */
+    .proj-tiles {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 0.9rem;
+    }
+
+    .proj-tile {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      background: #fff;
+      border: 1.5px solid var(--faint);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+      position: relative;
+      cursor: pointer;
+    }
+
+    .proj-tile:hover {
+      border-color: #b8963e;
+      box-shadow: 0 0 0 1px #b8963e, 0 8px 28px rgba(184,150,62,0.14);
+      transform: translateY(-3px);
+    }
+
+    .proj-tile--wip {
+      pointer-events: none;
+      opacity: 0.45;
+    }
+
+    /* ── MEDIA AREA ── */
+    .proj-tile-media {
+      width: 100%;
+      aspect-ratio: 4/3;
+      overflow: hidden;
+      position: relative;
+      background: var(--faint);
+    }
+
+    .proj-tile-media-inner {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.4s ease;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .proj-tile:hover .proj-tile-media-inner {
+      transform: scale(1.05);
+    }
+
+    .proj-media-rack {
+      background: linear-gradient(135deg, #1a1814 0%, #2d2420 50%, #1a1814 100%);
+    }
+    .proj-media-starcoder {
+      background: linear-gradient(135deg, #0f1923 0%, #1e3a5f 50%, #0f1923 100%);
+    }
+    .proj-media-cnotes {
+      background: linear-gradient(135deg, #1a2e1a 0%, #2d4a2d 50%, #1a2e1a 100%);
+    }
+    .proj-media-wip {
+      background: linear-gradient(135deg, #1e1c18 0%, #2a2620 100%);
+    }
+
+    .proj-media-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.4rem;
+      opacity: 0.6;
+      transition: opacity 0.3s;
+    }
+
+    .proj-tile:hover .proj-media-placeholder { opacity: 0.9; }
+
+    .proj-media-icon {
+      font-size: 1.6rem;
+      color: #b8963e;
+      line-height: 1;
+    }
+
+    .proj-media-label {
+      font-family: var(--mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: rgba(255,255,255,0.6);
+    }
+
+    /* ── TILE BODY ── */
+    .proj-tile-body {
+      padding: 0.7rem 0.9rem 0.75rem;
+    }
+
+    .proj-tile-title {
+      font-family: var(--serif);
+      font-size: 0.88rem;
+      font-weight: 500;
+      line-height: 1.2;
+      margin-bottom: 0.1rem;
+      color: var(--ink);
+    }
+
+    .proj-tile-sub {
+      font-family: var(--mono);
+      font-size: 0.5rem;
+      color: #b8963e;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 0.4rem;
+    }
+
+    .proj-tile-desc {
+      font-size: 0.73rem;
+      color: var(--mid);
+      line-height: 1.55;
+      margin-bottom: 0.5rem;
+    }
+
+    @media (max-width: 600px) {
+      .proj-tiles { grid-template-columns: 1fr; }
+    }
+
+    /* ─── SKILLS ─── */
+    .skills-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.35rem 3rem;
+    }
+
+    .skill-group-name {
+      font-family: var(--mono);
+      font-size: 0.68rem;
+      color: var(--ink);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 0.45rem;
+    }
+
+    .skill-vals {
+      font-size: 0.84rem;
+      color: var(--mid);
+      line-height: 1.9;
+    }
+
+    /* ─── PERSONAL SIDE ─── */
+    .personal-hero {
+      text-align: center;
+      padding: 1rem 0 2.5rem;
+    }
+
+    .personal-tagline {
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 1.3rem;
+      color: var(--mid);
+      line-height: 1.5;
+      max-width: 38ch;
+      margin: 0 auto 0.6rem;
+    }
+
+    .personal-sub {
+      font-family: var(--mono);
+      font-size: 0.63rem;
+      color: var(--accent);
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+    }
+
+    .film-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1px;
+      background: var(--faint);
+      margin-bottom: 3rem;
+    }
+
+    .film-cell {
+      aspect-ratio: 4/3;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+      transition: background 0.3s;
+    }
+
+    .film-cell-inner {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      opacity: 0.4;
+      font-family: var(--mono);
+      font-size: 0.63rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--mid);
+      transition: opacity 0.3s;
+    }
+
+    .film-cell:hover .film-cell-inner { opacity: 0.7; }
+
+    .film-cell-icon { font-size: 1.5rem; }
+
+    .personal-section { margin-bottom: 3rem; }
+
+    .work-item {
+      padding: 1.2rem 0;
+      border-bottom: 1px solid var(--faint);
+    }
+
+    .work-item:last-child { border-bottom: none; }
+
+    .work-type {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: var(--accent);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 0.2rem;
+    }
+
+    .work-title {
+      font-family: var(--serif);
+      font-size: 1rem;
+      font-weight: 500;
+      margin-bottom: 0.3rem;
+    }
+
+    .work-desc {
+      font-size: 0.85rem;
+      color: var(--mid);
+      line-height: 1.7;
+    }
+
+    .gear-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.35rem;
+      margin-top: 0.6rem;
+    }
+
+    /* ─── SIDE NAV ─── */
+    .sidenav {
+      position: fixed;
+      right: 1.75rem;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      z-index: 10;
+      align-items: flex-end;
+    }
+
+    .sidenav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.28rem 0;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .sidenav-label {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: transparent;
+      transition: color 0.3s ease, transform 0.3s ease;
+      transform: translateX(4px);
+      white-space: nowrap;
+    }
+
+    .sidenav-item:hover .sidenav-label,
+    .sidenav-item.active .sidenav-label {
+      color: var(--mid);
+      transform: translateX(0);
+    }
+
+    .sidenav-item.active .sidenav-label {
+      color: var(--ink);
+    }
+
+    .sidenav-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--faint);
+      border: 1px solid #bbb;
+      flex-shrink: 0;
+      transition: background 0.25s, border-color 0.25s, transform 0.25s;
+    }
+
+    .sidenav-item:hover .sidenav-dot {
+      background: var(--mid);
+      border-color: var(--mid);
+    }
+
+    .sidenav-item.active .sidenav-dot {
+      background: var(--accent);
+      border-color: var(--accent);
+      transform: scale(1.5);
+    }
+
+    /* ─── FOOTER ─── */
+    .footer {
+      margin-top: 4rem;
+      padding-top: 2rem;
+      border-top: 1px solid var(--faint);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer p {
+      font-family: var(--mono);
+      font-size: 0.67rem;
+      color: var(--mid);
+      letter-spacing: 0.05em;
+    }
+
+    .avail { display: flex; align-items: center; gap: 0.4rem; }
+
+    .avail-dot {
+      width: 5px; height: 5px;
+      border-radius: 50%;
+      background: #27ae60;
+      animation: blink 2.5s ease-in-out infinite;
+    }
+
+    @keyframes blink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+
+    /* ─── REVEAL ─── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(14px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+
+    .reveal.in { opacity: 1; transform: none; }
+
+    /* ─── SCROLL FADE AT TOP — removed, shadow handles separation ─── */
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 720px) {
+      .sidenav { display: none; }
+    }
+
+    @media (max-width: 560px) {
+      .header-inner {
+        grid-template-columns: 1fr;
+        padding-bottom: 1rem;
+      }
+      .header-right {
+        flex-direction: row;
+        justify-content: flex-start;
+      }
+      .bio-photo { width: 72px; height: 72px; }
+      .bio-name { font-size: 1.3rem; }
+    }
+
+    @media (max-width: 500px) {
+      .skills-cols { grid-template-columns: 1fr; gap: 1.1rem; }
+      .update-row { grid-template-columns: 58px 1fr; }
+      .film-grid { grid-template-columns: 1fr; }
+      .proj-tiles { grid-template-columns: 1fr; }
+    }
+
+    /* ─── SMOOTH SCROLL HINT ─── */
+    .scroll-hint {
+      position: absolute;
+      bottom: -1.5rem;
+      left: 0; right: 0;
+      display: flex;
+      justify-content: center;
+      opacity: 0;
+      animation: fadeHint 2s ease 1.2s forwards;
+    }
+
+    @keyframes fadeHint {
+      0% { opacity: 0; }
+      40% { opacity: 0.5; }
+      70% { opacity: 0.5; }
+      100% { opacity: 0; }
+    }
+
+    .scroll-hint-line {
+      width: 1px;
+      height: 28px;
+      background: linear-gradient(to bottom, var(--accent), transparent);
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="sidenav" id="sidenav">
+    <a class="sidenav-item" href="#updates"><span class="sidenav-label">Recent</span><span class="sidenav-dot"></span></a>
+    <a class="sidenav-item" href="#projects"><span class="sidenav-label">Built</span><span class="sidenav-dot"></span></a>
+    <a class="sidenav-item" href="#research"><span class="sidenav-label">Research</span><span class="sidenav-dot"></span></a>
+    <a class="sidenav-item" href="#experience"><span class="sidenav-label">Experience</span><span class="sidenav-dot"></span></a>
+    <a class="sidenav-item" href="#contact"><span class="sidenav-label">Contact</span><span class="sidenav-dot"></span></a>
+  </nav>
+
+  <!-- ─── FIXED HEADER ─── -->
+  <header class="site-header" id="site-header">
+    <div class="header-inner">
+      <div class="header-left">
+        <div class="bio-title">Applied AI · AI/ML Engineer · Researcher</div>
+        <h1 class="bio-name">Tejas Belakavadi Kemparaju</h1>
+        <p class="bio-text" id="header-bio-text">
+          I build ML systems & LLM-powered agents, from production inference pipelines to agentic architectures. M.S. CS from <strong>NJIT</strong>. Founder of <a href="https://cnotes.in" target="_blank">Cnotes.in</a> (50K+ users).
+        </p>
+        <div class="bio-links">
+          <a class="bio-link" href="mailto:tejas55bk@gmail.com">✉ tejas55bk@gmail.com</a>
+          <a class="bio-link" href="https://linkedin.com/in/tejasbk" target="_blank">↗ LinkedIn</a>
+          <a class="bio-link" href="https://github.com/tejas100" target="_blank">↗ GitHub</a>
+          <a class="bio-link" href="tel:8622140129">☏ 862-214-0129</a>
+        </div>
+      </div>
+
+      <div class="header-right">
+        <img src="./three.png" class="bio-photo" alt="Tejas BK"
+          onerror="this.outerHTML='<div style=\'width:150px;height:150px;border-radius:50%;background:linear-gradient(135deg,#d5cfc7,#bfb8ae);border:2.5px solid var(--faint);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:2.5rem;color:#fff;font-style:italic;flex-shrink:0\'>T</div>'" />
+      </div>
+    </div>
+
+    <!-- REGAL TOGGLE BAR -->
+    <div class="toggle-bar">
+      <span class="toggle-ornament">✦</span>
+      <div class="regal-toggle" id="modeToggle" role="switch" aria-checked="false" tabindex="0">
+        <div class="regal-pill" id="togglePill"></div>
+        <span class="regal-label">Professional</span>
+        <span class="regal-label">Personal</span>
+      </div>
+      <span class="toggle-ornament">✦</span>
+    </div>
+
+  </header>
+
+  <!-- ─── SCROLLABLE BODY ─── -->
+  <div class="scroll-body" id="scrollBody">
+    <div class="page-inner">
+
+      <div class="content-panel">
+
+        <!-- ══════════ PROFESSIONAL VIEW ══════════ -->
+        <div class="content-view visible" id="professionalView">
+
+          <!-- RECENT -->
+          <section class="section reveal" id="updates">
+            <div class="section-label">Recent</div>
+            <div class="updates">
+              <div class="update-row">
+                <span class="update-date">May 2025</span>
+                <span class="update-text"><strong>Graduated</strong> M.S. Computer Science, NJIT. <span class="badge">New</span></span>
+              </div>
+              <div class="update-row">
+                <span class="update-date">2026</span>
+                <span class="update-text">Extending <strong>TAPE</strong> (arXiv:2602.19633) — anchor-scored sequential graph merging for agentic LLM planning. <span class="badge">In progress</span></span>
+              </div>
+              <div class="update-row">
+                <span class="update-date">2026</span>
+                <span class="update-text">Built <strong>Rack [Agentic Career Assistant]</strong> — RAG-based multi-step AI agent with vLLM inference and hallucination safeguards.</span>
+              </div>
+              <div class="update-row">
+                <span class="update-date">2025</span>
+                <span class="update-text">Fine-tuned <strong>StarCoder2-15B</strong> using LoRA/QLoRA — 70% GPU memory reduction, maintained quality.</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- STUFF I BUILT — moved right after Recent -->
+          <section class="section reveal" id="projects">
+            <div class="section-label">Stuff I Built</div>
+            <div class="proj-tiles">
+
+              <a class="proj-tile" href="https://github.com/tejas100" target="_blank" rel="noopener">
+                <div class="proj-tile-media">
+                  <div class="proj-tile-media-inner proj-media-rack">
+                    <div class="proj-media-placeholder">
+                      <span class="proj-media-icon">⟁</span>
+                      <span class="proj-media-label">RACK</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="proj-tile-body">
+                  <div class="proj-tile-title">RACK</div>
+                  <div class="proj-tile-sub">Agentic Career Assistant</div>
+                  <p class="proj-tile-desc">Stateful AI agent for career workflows — resume analysis, job matching, skill gap detection. RAG + FAISS + vLLM.</p>
+                  <div class="tags">
+                    <span class="tag">RAG</span><span class="tag">FAISS</span><span class="tag">vLLM</span><span class="tag">GPT-4o</span>
+                  </div>
+                </div>
+              </a>
+
+              <a class="proj-tile" href="https://github.com/tejas100" target="_blank" rel="noopener">
+                <div class="proj-tile-media">
+                  <div class="proj-tile-media-inner proj-media-starcoder">
+                    <div class="proj-media-placeholder">
+                      <span class="proj-media-icon">⌬</span>
+                      <span class="proj-media-label">StarCoder2</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="proj-tile-body">
+                  <div class="proj-tile-title">StarCoder2-15B</div>
+                  <div class="proj-tile-sub">Instruction Dataset Generator</div>
+                  <p class="proj-tile-desc">Synthetic instruction-tuning pipeline for a 15B code LLM. LoRA/QLoRA via PEFT — 70% GPU memory reduction.</p>
+                  <div class="tags">
+                    <span class="tag">LoRA</span><span class="tag">QLoRA</span><span class="tag">PEFT</span><span class="tag">HuggingFace</span>
+                  </div>
+                </div>
+              </a>
+
+              <a class="proj-tile" href="https://cnotes.in" target="_blank" rel="noopener">
+                <div class="proj-tile-media">
+                  <div class="proj-tile-media-inner proj-media-cnotes">
+                    <div class="proj-media-placeholder">
+                      <span class="proj-media-icon">◈</span>
+                      <span class="proj-media-label">Cnotes.in</span>
+                    </div>
+                  </div>
+                </div>
+                <div class="proj-tile-body">
+                  <div class="proj-tile-title">Cnotes.in</div>
+                  <div class="proj-tile-sub">B2B SaaS · 50K+ Users</div>
+                  <p class="proj-tile-desc">Solo-built full-stack CRM for Local Cable Operators. LAMP + React, idempotent billing, role-based auth. 50K users.</p>
+                  <div class="tags">
+                    <span class="tag">Founder</span><span class="tag">React</span><span class="tag">LAMP</span><span class="tag">SaaS</span>
+                  </div>
+                </div>
+              </a>
+
+            </div>
+          </section>
+
+          <!-- RESEARCH -->
+          <section class="section reveal" id="research">
+            <div class="section-label">Research &amp; Publications</div>
+            <div class="pub-list">
+
+              <div class="pub">
+                <div class="pub-num">i.</div>
+                <div>
+                  <div class="pub-venue">In Progress · arXiv Extension</div>
+                  <div class="pub-title">Stability-Ranked Sequential Merging for Agentic Planning Graphs</div>
+                  <p class="pub-desc">Extends TAPE's batch graph construction with an anchor-scored sequential merge pipeline. Novel edge-retention policy and ILP feasibility formulation for constrained LLM agent planning under tool-guided adaptive execution.</p>
+                  <div class="tags">
+                    <span class="tag">LLM Agents</span><span class="tag">Planning</span><span class="tag">ILP</span><span class="tag">Graph Merging</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pub">
+                <div class="pub-num">ii.</div>
+                <div>
+                  <div class="pub-venue">IEEE · Published</div>
+                  <div class="pub-title">Prediction of CERN Electron Mass Collision using CATBoosting and LGBMR</div>
+                  <p class="pub-desc">Ensemble ML applied at particle physics scale. CatBoost + LightGBM with advanced feature engineering — 99% accuracy on CERN electron mass collision prediction.</p>
+                  <div class="tags">
+                    <span class="tag">CatBoost</span><span class="tag">LightGBM</span><span class="tag">Ensemble ML</span><span class="tag">Physics</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pub">
+                <div class="pub-num">iii.</div>
+                <div>
+                  <div class="pub-venue">Published</div>
+                  <div class="pub-title">Detecting Diabetic Retinopathy using Deep Learning</div>
+                  <p class="pub-desc">Fully convolutional neural network for early-stage retinopathy screening. 93% accuracy, end-to-end clinical usability with TensorFlow and Django.</p>
+                  <div class="tags">
+                    <span class="tag">FCN</span><span class="tag">TensorFlow</span><span class="tag">Medical AI</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pub">
+                <div class="pub-num">iv.</div>
+                <div>
+                  <div class="pub-venue">In Preparation</div>
+                  <div class="pub-title">Fourth Paper · Details Soon</div>
+                  <p class="pub-desc">Currently being finalized. Will be listed upon submission.</p>
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+          <!-- EXPERIENCE -->
+          <section class="section reveal" id="experience">
+            <div class="section-label">Experience</div>
+            <div class="exp-list">
+
+              <div class="exp">
+                <div>
+                  <div class="exp-role">Machine Learning Engineer — PyTorch &amp; Applied AI</div>
+                  <div class="exp-org">Community Dream Foundations</div>
+                </div>
+                <div class="exp-period">Present</div>
+                <p class="exp-detail">ML pipelines for event data processing (XGBoost, scikit-learn). Real-time inference APIs in FastAPI, sub-200ms latency. Precision/recall evaluation with A/B-style comparisons.</p>
+              </div>
+
+              <div class="exp">
+                <div>
+                  <div class="exp-role">Software Engineer — Backend &amp; ML</div>
+                  <div class="exp-org">Exito Infynites</div>
+                </div>
+                <div class="exp-period">2022 – 2023</div>
+                <p class="exp-detail">ML pipelines for event data processing (XGBoost, scikit-learn). Real-time inference APIs in FastAPI, sub-200ms latency. Precision/recall evaluation with A/B-style comparisons.</p>
+              </div>
+
+              <div class="exp">
+                <div>
+                  <div class="exp-role">Project Engineer — Full Stack &amp; Cloud</div>
+                  <div class="exp-org">Wipro</div>
+                </div>
+                <div class="exp-period">2021 – 2022</div>
+                <p class="exp-detail">Java backend services on AWS. 40% API latency reduction. Docker + Kubernetes for service reliability at scale.</p>
+              </div>
+
+              <div class="exp">
+                <div>
+                  <div class="exp-role">Founder &amp; Lead Engineer</div>
+                  <div class="exp-org">Cnotes.in</div>
+                </div>
+                <div class="exp-period">2019 – 2021</div>
+                <p class="exp-detail">Solo-built a full-stack CRM (LAMP + React) for Local Cable Operators — scaled to 50K+ users. Idempotent billing, audit-ready event logs, role-based auth.</p>
+              </div>
+
+            </div>
+          </section>
+
+          <!-- SKILLS -->
+          <section class="section reveal">
+            <div class="section-label">Technical Stack</div>
+            <div class="skills-cols">
+              <div>
+                <div class="skill-group-name">AI / LLM</div>
+                <div class="skill-vals">RAG · LangChain · vLLM · ONNX<br>LoRA · QLoRA · PEFT · HuggingFace<br>FAISS · Pinecone · ChromaDB</div>
+              </div>
+              <div>
+                <div class="skill-group-name">ML &amp; Data</div>
+                <div class="skill-vals">PyTorch · TensorFlow · XGBoost<br>Scikit-learn · MLflow · Drift Monitoring<br>Sentence Transformers · Model Eval</div>
+              </div>
+              <div>
+                <div class="skill-group-name">Backend</div>
+                <div class="skill-vals">Python · Java · TypeScript<br>FastAPI · Django · Node.js<br>PostgreSQL · MongoDB · Redis</div>
+              </div>
+              <div>
+                <div class="skill-group-name">Infra &amp; Cloud</div>
+                <div class="skill-vals">Docker · Kubernetes<br>AWS (EKS · SQS · Lambda)<br>Kafka · GitHub Actions</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- CONTACT -->
+          <section class="section reveal" id="contact">
+            <div class="section-label">Contact</div>
+            <p style="font-size:0.92rem; color:var(--mid); max-width:50ch; line-height:1.8; margin-bottom:1.5rem;">
+              Looking for <strong style="color:var(--ink);">AI Engineer, ML Engineer, Forward Deployment, and Backend</strong> roles — especially at AI-native companies.
+            </p>
+            <a href="mailto:tejas55bk@gmail.com" style="display:inline-block;font-family:var(--mono);font-size:0.76rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent);padding:0.65rem 1.4rem;text-decoration:none;transition:background 0.2s,color 0.2s;" onmouseover="this.style.background='var(--accent)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='var(--accent)'">
+              Say hello →
+            </a>
+          </section>
+
+          <!-- FOOTER -->
+          <footer class="footer">
+            <p>tejasbk.dev · New Jersey, USA</p>
+            <div class="avail">
+              <div class="avail-dot"></div>
+              <p>Open to opportunities</p>
+            </div>
+          </footer>
+
+        </div><!-- /professionalView -->
+
+
+        <!-- ══════════ PERSONAL VIEW ══════════ -->
+        <div class="content-view hidden" id="personalView">
+
+          <div class="personal-hero">
+            <p class="personal-tagline">Behind the code, there's a person chasing light and stories.</p>
+            <div class="personal-sub">Filmmaker · Photographer · Observer</div>
+          </div>
+
+          <!-- PLACEHOLDER FILM GRID -->
+          <section class="personal-section">
+            <div class="section-label">Work</div>
+            <div class="film-grid">
+              <div class="film-cell">
+                <div class="film-cell-inner">
+                  <div class="film-cell-icon">🎞</div>
+                  <span>Short Film</span>
+                </div>
+              </div>
+              <div class="film-cell">
+                <div class="film-cell-inner">
+                  <div class="film-cell-icon">📷</div>
+                  <span>Photography</span>
+                </div>
+              </div>
+              <div class="film-cell">
+                <div class="film-cell-inner">
+                  <div class="film-cell-icon">🎬</div>
+                  <span>Documentary</span>
+                </div>
+              </div>
+              <div class="film-cell">
+                <div class="film-cell-inner">
+                  <div class="film-cell-icon">🎵</div>
+                  <span>Music Video</span>
+                </div>
+              </div>
+            </div>
+            <p style="font-family:var(--mono);font-size:0.62rem;color:var(--mid);letter-spacing:0.08em;text-align:center;margin-top:0.75rem;">← Replace these placeholders with your actual work →</p>
+          </section>
+
+          <!-- FILMS / PROJECTS -->
+          <section class="personal-section">
+            <div class="section-label">Films &amp; Stories</div>
+            <div class="work-item">
+              <div class="work-type">Short Film</div>
+              <div class="work-title">Add your film title here</div>
+              <p class="work-desc">Brief description — where it was shot, what it explores, any screenings or awards.</p>
+            </div>
+            <div class="work-item">
+              <div class="work-type">Photography Series</div>
+              <div class="work-title">Add your photo series here</div>
+              <p class="work-desc">What the series is about — the light, the people, the place.</p>
+            </div>
+            <div class="work-item">
+              <div class="work-type">Music Video / Commercial</div>
+              <div class="work-title">Add your project here</div>
+              <p class="work-desc">Client, concept, and what made it interesting to make.</p>
+            </div>
+          </section>
+
+          <!-- GEAR -->
+          <section class="personal-section">
+            <div class="section-label">Gear</div>
+            <p style="font-size:0.88rem;color:var(--mid);line-height:1.8;margin-bottom:0.75rem;">What I shoot with — add your actual setup here.</p>
+            <div class="gear-list">
+              <span class="tag">Camera Body</span>
+              <span class="tag">Primary Lens</span>
+              <span class="tag">Audio</span>
+              <span class="tag">Editing Suite</span>
+              <span class="tag">Color Grade</span>
+            </div>
+          </section>
+
+          <!-- CURRENTLY -->
+          <section class="personal-section">
+            <div class="section-label">Currently</div>
+            <div class="updates">
+              <div class="update-row">
+                <span class="update-date">Now</span>
+                <span class="update-text">Add what you're currently shooting or working on creatively.</span>
+              </div>
+              <div class="update-row">
+                <span class="update-date">2025</span>
+                <span class="update-text">Add a past creative milestone or project.</span>
+              </div>
+            </div>
+          </section>
+
+          <!-- FOOTER personal -->
+          <footer class="footer">
+            <p>tejasbk.dev · New Jersey, USA</p>
+            <div class="avail">
+              <div class="avail-dot" style="background:#8b6914;"></div>
+              <p style="color:var(--mid)">Freelance open</p>
+            </div>
+          </footer>
+
+        </div><!-- /personalView -->
+
+      </div><!-- /content-panel -->
+
+    </div><!-- /page-inner -->
+  </div><!-- /scroll-body -->
+
+  <script>
+    // ─── MEASURE HEADER AND SET CSS VAR ───
+    const header = document.getElementById('site-header');
+    const scrollBody = document.getElementById('scrollBody');
+
+    function setHeaderHeight() {
+      const h = header.getBoundingClientRect().height;
+      document.documentElement.style.setProperty('--header-h', h + 'px');
+      scrollBody.style.paddingTop = (h + 40) + 'px';
+    }
+
+    setHeaderHeight();
+    window.addEventListener('resize', setHeaderHeight);
+
+    // ─── HEADER SHADOW ON SCROLL ───
+    window.addEventListener('scroll', () => {
+      header.classList.toggle('scrolled', window.scrollY > 10);
+    }, { passive: true });
+
+    // ─── SCROLL REVEAL ───
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.08 });
+    document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+    // ─── SIDENAV ACTIVE ───
+    const navItems = document.querySelectorAll('.sidenav-item');
+    const sio = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const id = e.target.id;
+          navItems.forEach(d => d.classList.remove('active'));
+          const match = document.querySelector(`.sidenav-item[href="#${id}"]`);
+          if (match) match.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-35% 0px -55% 0px' });
+
+    ['updates','projects','research','experience','contact'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) sio.observe(el);
+    });
+
+    // ─── REGAL TOGGLE ───
+    const toggle = document.getElementById('modeToggle');
+    const pill = document.getElementById('togglePill');
+    const profView = document.getElementById('professionalView');
+    const persView = document.getElementById('personalView');
+    const labels = toggle.querySelectorAll('.regal-label');
+    let isPersonal = false;
+
+    function positionPill(animate) {
+      const activeLabel = labels[isPersonal ? 1 : 0];
+      if (!animate) pill.style.transition = 'none';
+      pill.style.width = activeLabel.offsetWidth + 'px';
+      pill.style.transform = isPersonal
+        ? `translateX(${labels[0].offsetWidth}px)`
+        : 'translateX(0)';
+      if (!animate) {
+        pill.getBoundingClientRect();
+        pill.style.transition = '';
+      }
+    }
+
+    // Set initial pill position without animation
+    positionPill(false);
+
+    function switchMode(toPersonal) {
+      if (toPersonal === isPersonal) return;
+      isPersonal = toPersonal;
+      toggle.classList.toggle('is-personal', isPersonal);
+      toggle.setAttribute('aria-checked', isPersonal);
+      positionPill(true);
+
+      const outgoing = isPersonal ? profView : persView;
+      const incoming = isPersonal ? persView : profView;
+
+      outgoing.style.transition = 'opacity 0.35s ease, transform 0.35s ease, filter 0.35s ease';
+      outgoing.style.opacity = '0';
+      outgoing.style.transform = 'translateY(-12px)';
+      outgoing.style.filter = 'blur(3px)';
+
+      setTimeout(() => {
+        outgoing.classList.remove('visible');
+        outgoing.classList.add('hidden');
+
+        incoming.style.transition = 'none';
+        incoming.style.opacity = '0';
+        incoming.style.transform = 'translateY(16px)';
+        incoming.style.filter = 'blur(4px)';
+        incoming.classList.remove('hidden');
+        incoming.classList.add('visible');
+        incoming.getBoundingClientRect();
+
+        incoming.style.transition = 'opacity 0.48s cubic-bezier(0.4,0,0.2,1), transform 0.48s cubic-bezier(0.4,0,0.2,1), filter 0.48s ease';
+        incoming.style.opacity = '1';
+        incoming.style.transform = 'none';
+        incoming.style.filter = 'none';
+
+        if (!isPersonal) {
+          document.querySelectorAll('#professionalView .reveal').forEach(el => {
+            el.classList.remove('in');
+            setTimeout(() => io.observe(el), 100);
+          });
+        }
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }, 340);
+    }
+
+    toggle.addEventListener('click', () => switchMode(!isPersonal));
+    toggle.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); switchMode(!isPersonal); }
+    });
+    window.addEventListener('resize', () => positionPill(false));
+  </script>
+</body>
+</html>
