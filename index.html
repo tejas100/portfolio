@@ -56,14 +56,14 @@
     }
 
     .header-inner {
-      max-width: var(--max-w);
+      max-width: 750px;
       margin: 0 auto;
-      padding: 2.6rem 1.5rem 1.4rem;
+      padding: 2.6rem 2.5rem 1.4rem;
       display: grid;
       grid-template-columns: 1fr auto;
       gap: 1.5rem;
       align-items: center;
-      background: rgba(247, 244, 239, 0.93);
+      background: rgba(247, 244, 239, 0.6);
       backdrop-filter: blur(18px) saturate(1.4);
       -webkit-backdrop-filter: blur(18px) saturate(1.4);
       transition: box-shadow 0.3s ease;
@@ -460,7 +460,7 @@
       flex-direction: column;
       align-items: center;
       gap: 0.4rem;
-      opacity: 0.6;
+      opacity: 0.96;
       transition: opacity 0.3s;
     }
 
@@ -470,6 +470,14 @@
       font-size: 1.6rem;
       color: #b8963e;
       line-height: 1;
+    }
+
+    .proj_gif{
+       align-items: center;
+       width: 400px;
+       height: 300px;
+       margin-top: 170px;
+       margin-left: 200px;
     }
 
     .proj-media-label {
@@ -799,8 +807,9 @@
   <nav class="sidenav" id="sidenav">
     <a class="sidenav-item" href="#updates"><span class="sidenav-label">Recent</span><span class="sidenav-dot"></span></a>
     <a class="sidenav-item" href="#projects"><span class="sidenav-label">Built</span><span class="sidenav-dot"></span></a>
+     <a class="sidenav-item" href="#experience"><span class="sidenav-label">Experience</span><span class="sidenav-dot"></span></a>
     <a class="sidenav-item" href="#research"><span class="sidenav-label">Research</span><span class="sidenav-dot"></span></a>
-    <a class="sidenav-item" href="#experience"><span class="sidenav-label">Experience</span><span class="sidenav-dot"></span></a>
+   
     <a class="sidenav-item" href="#contact"><span class="sidenav-label">Contact</span><span class="sidenav-dot"></span></a>
   </nav>
 
@@ -811,7 +820,7 @@
         <div class="bio-title">Applied AI · AI/ML Engineer · Researcher</div>
         <h1 class="bio-name">Tejas Belakavadi Kemparaju</h1>
         <p class="bio-text" id="header-bio-text">
-          I build ML systems & LLM-powered agents, from production inference pipelines to agentic architectures. M.S. CS from <strong>NJIT</strong>. Founder of <a href="https://cnotes.in" target="_blank">Cnotes.in</a> (50K+ users).
+          I build ML systems & LLM-powered agents, from production pipelines to agentic architectures. Master's in Computer Science. <strong>Machine Learning Engineer</strong> at <a href="https://cdreamstream.org/" target="_blank">CDF</a>, & Founder of <a href="https://cnotes.in" target="_blank">Cnotes.in</a> (50K+ users).
         </p>
         <div class="bio-links">
           <a class="bio-link" href="mailto:tejas55bk@gmail.com">✉ tejas55bk@gmail.com</a>
@@ -874,7 +883,7 @@
 
           <!-- STUFF I BUILT — moved right after Recent -->
           <section class="section reveal" id="projects">
-            <div class="section-label">Stuff I Built</div>
+            <div class="section-label">Stuffs I've Built</div>
             <div class="proj-tiles">
 
               <a class="proj-tile" href="https://github.com/tejas100" target="_blank" rel="noopener">
@@ -882,12 +891,12 @@
                   <div class="proj-tile-media-inner proj-media-rack">
                     <div class="proj-media-placeholder">
                       <span class="proj-media-icon">⟁</span>
-                      <span class="proj-media-label">RACK</span>
+                      <span class="proj-media-label">RACKK</span>
                     </div>
                   </div>
                 </div>
                 <div class="proj-tile-body">
-                  <div class="proj-tile-title">RACK</div>
+                  <div class="proj-tile-title">Rackk.app</div>
                   <div class="proj-tile-sub">Agentic Career Assistant</div>
                   <p class="proj-tile-desc">Stateful AI agent for career workflows — resume analysis, job matching, skill gap detection. RAG + FAISS + vLLM.</p>
                   <div class="tags">
@@ -919,7 +928,7 @@
                 <div class="proj-tile-media">
                   <div class="proj-tile-media-inner proj-media-cnotes">
                     <div class="proj-media-placeholder">
-                      <span class="proj-media-icon">◈</span>
+                      <span class="proj-media-icon"> <img src="./cnotess.gif" class="proj_gif" alt="Tejas BK"></span>
                       <span class="proj-media-label">Cnotes.in</span>
                     </div>
                   </div>
@@ -937,60 +946,8 @@
             </div>
           </section>
 
-          <!-- RESEARCH -->
-          <section class="section reveal" id="research">
-            <div class="section-label">Research &amp; Publications</div>
-            <div class="pub-list">
 
-              <div class="pub">
-                <div class="pub-num">i.</div>
-                <div>
-                  <div class="pub-venue">In Progress · arXiv Extension</div>
-                  <div class="pub-title">Stability-Ranked Sequential Merging for Agentic Planning Graphs</div>
-                  <p class="pub-desc">Extends TAPE's batch graph construction with an anchor-scored sequential merge pipeline. Novel edge-retention policy and ILP feasibility formulation for constrained LLM agent planning under tool-guided adaptive execution.</p>
-                  <div class="tags">
-                    <span class="tag">LLM Agents</span><span class="tag">Planning</span><span class="tag">ILP</span><span class="tag">Graph Merging</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="pub">
-                <div class="pub-num">ii.</div>
-                <div>
-                  <div class="pub-venue">IEEE · Published</div>
-                  <div class="pub-title">Prediction of CERN Electron Mass Collision using CATBoosting and LGBMR</div>
-                  <p class="pub-desc">Ensemble ML applied at particle physics scale. CatBoost + LightGBM with advanced feature engineering — 99% accuracy on CERN electron mass collision prediction.</p>
-                  <div class="tags">
-                    <span class="tag">CatBoost</span><span class="tag">LightGBM</span><span class="tag">Ensemble ML</span><span class="tag">Physics</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="pub">
-                <div class="pub-num">iii.</div>
-                <div>
-                  <div class="pub-venue">Published</div>
-                  <div class="pub-title">Detecting Diabetic Retinopathy using Deep Learning</div>
-                  <p class="pub-desc">Fully convolutional neural network for early-stage retinopathy screening. 93% accuracy, end-to-end clinical usability with TensorFlow and Django.</p>
-                  <div class="tags">
-                    <span class="tag">FCN</span><span class="tag">TensorFlow</span><span class="tag">Medical AI</span>
-                  </div>
-                </div>
-              </div>
-
-              <div class="pub">
-                <div class="pub-num">iv.</div>
-                <div>
-                  <div class="pub-venue">In Preparation</div>
-                  <div class="pub-title">Fourth Paper · Details Soon</div>
-                  <p class="pub-desc">Currently being finalized. Will be listed upon submission.</p>
-                </div>
-              </div>
-
-            </div>
-          </section>
-
-          <!-- EXPERIENCE -->
+           <!-- EXPERIENCE -->
           <section class="section reveal" id="experience">
             <div class="section-label">Experience</div>
             <div class="exp-list">
@@ -1033,6 +990,61 @@
 
             </div>
           </section>
+
+          <!-- RESEARCH -->
+          <section class="section reveal" id="research">
+            <div class="section-label">Research &amp; Publications</div>
+            <div class="pub-list">
+
+              <div class="pub">
+                <div class="pub-num">i.</div>
+                <div>
+                  <div class="pub-venue">In Progress · arXiv Extension</div>
+                  <div class="pub-title">Stability-Ranked Sequential Merging for Agentic Planning Graphs</div>
+                  <p class="pub-desc">Extends TAPE's batch graph construction with an anchor-scored sequential merge pipeline. Novel edge-retention policy and ILP feasibility formulation for constrained LLM agent planning under tool-guided adaptive execution.</p>
+                  <div class="tags">
+                    <span class="tag">LLM Agents</span><span class="tag">Planning</span><span class="tag">ILP</span><span class="tag">Graph Merging</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pub">
+                <div class="pub-num">ii.</div>
+                <div>
+                  <div class="pub-venue">IEEE · Published</div>
+                  <div class="pub-title">Prediction of CERN Electron Mass Collision using CATBoosting and LGBMR</div>
+                  <p class="pub-desc">Ensemble ML applied at particle physics scale. CatBoost + LightGBM with advanced feature engineering — 99% accuracy on CERN electron mass collision prediction.</p>
+                  <div class="tags">
+                    <span class="tag">CatBoost</span><span class="tag">LightGBM</span><span class="tag">Ensemble ML</span><span class="tag">Physics</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pub">
+                <div class="pub-num">iii.</div>
+                <div>
+                  <div class="pub-venue">IJNRD · Published</div>
+                  <div class="pub-title">Detecting Diabetic Retinopathy using Deep Learning</div>
+                  <p class="pub-desc">Fully convolutional neural network for early-stage retinopathy screening. 93% accuracy, end-to-end clinical usability with TensorFlow and Django.</p>
+                  <div class="tags">
+                    <span class="tag">FCN</span><span class="tag">TensorFlow</span><span class="tag">Medical AI</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="pub">
+                <div class="pub-num">iv.</div>
+                <div>
+                  <div class="pub-venue">In Preparation</div>
+                  <div class="pub-title">Fourth Paper · Details Soon</div>
+                  <p class="pub-desc">Currently being finalized. Will be listed upon submission.</p>
+                </div>
+              </div>
+
+            </div>
+          </section>
+
+         
 
           <!-- SKILLS -->
           <section class="section reveal">
