@@ -757,6 +757,25 @@
       animation: blink 2.5s ease-in-out infinite;
     }
 
+  /* Wave */
+
+  .wave {
+  display: inline-block;
+  transform-origin: 70% 70%;
+  animation: wave-hi 1.4s infinite;
+}
+
+@keyframes wave-hi {
+  0% { transform: rotate(0deg); }
+  10% { transform: rotate(14deg); }
+  20% { transform: rotate(-8deg); }
+  30% { transform: rotate(14deg); }
+  40% { transform: rotate(-4deg); }
+  50% { transform: rotate(10deg); }
+  60% { transform: rotate(0deg); }
+  100% { transform: rotate(0deg); }
+}
+
     @keyframes blink {
       0%, 100% { opacity: 1; }
       50% { opacity: 0.2; }
@@ -828,9 +847,9 @@
   <nav class="sidenav" id="sidenav">
     <a class="sidenav-item" href="#updates"><span class="sidenav-label">Recent</span><span class="sidenav-dot"></span></a>
     <a class="sidenav-item" href="#projects"><span class="sidenav-label">Built</span><span class="sidenav-dot"></span></a>
-     <a class="sidenav-item" href="#experience"><span class="sidenav-label">Experience</span><span class="sidenav-dot"></span></a>
+    <a class="sidenav-item" href="#experience"><span class="sidenav-label">Experience</span><span class="sidenav-dot"></span></a>
     <a class="sidenav-item" href="#research"><span class="sidenav-label">Research</span><span class="sidenav-dot"></span></a>
-   
+    <a class="sidenav-item" href="#techstack"><span class="sidenav-label">Teck Stack</span><span class="sidenav-dot"></span></a>
     <a class="sidenav-item" href="#contact"><span class="sidenav-label">Contact</span><span class="sidenav-dot"></span></a>
   </nav>
 
@@ -841,7 +860,7 @@
         <div class="bio-title"> <b>AI/ML Engineer · Researcher</b></div>
         <h1 class="bio-name">Tejas Belakavadi Kemparaju</h1>
         <p class="bio-text" id="header-bio-text">
-          I build ML systems & LLM-powered agents, from production pipelines to agentic architectures. Master's in CS. Founder of <a href="https://rackx.app" target="_blank"><strong>RackX</strong></a> - an agentic job search assistant, and <a href="https://cnotes.in" target="_blank"><strong>Cnotes</strong></a> (50K+ users).
+          I build ML systems & LLM-powered agents, from production pipelines to agentic architectures. Master's in CS. AIE at Uber. Founder of <a href="https://rackx.app" target="_blank"><strong>RackX</strong></a> - an agentic job search assistant, and <a href="https://cnotes.in" target="_blank"><strong>Cnotes</strong></a> (50K+ users) - A Business CRM for LCO's hosuing more than 50k+ users.
         </p>
         <div class="bio-links">
           <a class="bio-link" href="mailto:tejas55bk@gmail.com">✉ tejas55bk@gmail.com</a>
@@ -976,7 +995,7 @@
 
               <div class="exp">
                 <div>
-                  <div class="exp-role">Machine Learning Engineer - PyTorch &amp; Applied AI</div>
+                  <div class="exp-role">Applied AI Engineer</div>
                   <div class="exp-org">Uber</div>
                 </div>
                 <div class="exp-period">Present</div>
@@ -1078,7 +1097,7 @@
          
 
           <!-- SKILLS -->
-          <section class="section reveal">
+          <section class="section reveal" id="techstack">
             <div class="section-label">Technical Stack</div>
             <div class="skills-cols">
               <div>
@@ -1106,9 +1125,12 @@
             <p style="font-size:0.92rem; color:var(--mid); max-width:50ch; line-height:1.8; margin-bottom:1.5rem;">
               Actively looking for <strong style="color:var(--ink);">AI/MLEngineer, Forward Deployment, and Backend</strong> roles.
             </p>
-            <a href="mailto:tejas55bk@gmail.com" style="display:inline-block;font-family:var(--mono);font-size:0.76rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent);padding:0.65rem 1.4rem;text-decoration:none;transition:background 0.2s,color 0.2s;" onmouseover="this.style.background='var(--accent)';this.style.color='#fff'" onmouseout="this.style.background='transparent';this.style.color='var(--accent)'">
-              Say hello →
-            </a>
+            <a href="mailto:tejas55bk@gmail.com"
+   style="display:inline-flex;align-items:center;gap:0.45rem;font-family:var(--mono);font-size:0.76rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent);padding:0.65rem 1.4rem;text-decoration:none;transition:background 0.2s,color 0.2s;"
+   onmouseover="this.style.background='var(--accent)';this.style.color='#fff'"
+   onmouseout="this.style.background='transparent';this.style.color='var(--accent)'">
+  Let's Connect <span class="wave">👋</span>
+</a>
           </section>
 
           <!-- FOOTER -->
