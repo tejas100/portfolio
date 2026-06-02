@@ -352,6 +352,52 @@
       margin-bottom: 0.35rem;
     }
 
+    .pub-title-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.42rem;
+      margin-bottom: 0.35rem;
+    }
+
+    .pub-title-row .pub-title {
+      margin-bottom: 0;
+    }
+
+    .pub-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.05rem;
+      height: 1.05rem;
+      margin-top: 0.26rem;
+      color: var(--accent);
+      opacity: 0.72;
+      text-decoration: none;
+      flex: 0 0 auto;
+      transition: opacity 0.2s ease, transform 0.2s ease, color 0.2s ease;
+    }
+
+    .pub-link-icon {
+      width: 0.9rem;
+      height: 0.9rem;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .pub-link:hover {
+      opacity: 1;
+      transform: translate(2px, -3px);
+    }
+
+    .pub-link:focus-visible {
+      outline: 1px solid var(--accent);
+      outline-offset: 4px;
+      border-radius: 50%;
+    }
+
     .pub-desc {
       font-size: 0.83rem;
       color: var(--mid);
@@ -860,7 +906,7 @@
         <div class="bio-title"> <b>AI/ML Engineer · Researcher</b></div>
         <h1 class="bio-name">Tejas Belakavadi Kemparaju</h1>
         <p class="bio-text" id="header-bio-text">
-          I build ML systems & LLM-powered agents, from production pipelines to agentic architectures. Master's in CS. AIE at Uber. Founder of <a href="https://rackx.app" target="_blank"><strong>RackX</strong></a> - an agentic job search assistant, and <a href="https://cnotes.in" target="_blank"><strong>Cnotes</strong></a> (50K+ users) - A Business CRM for LCO's hosuing more than 50k+ users.
+          I build ML systems & LLM-powered agents, from production pipelines to agentic architectures. Master's in CS. AIE at Uber. Founder of <a href="https://rackx.app" target="_blank"><strong>RackX</strong></a> - an agentic job search assistant, and <a href="https://cnotes.in" target="_blank"><strong>Cnotes</strong></a> (50K+ users) - A Business CRM for LCO's housing more than 50k+ users.
         </p>
         <div class="bio-links">
           <a class="bio-link" href="mailto:tejas55bk@gmail.com">✉ tejas55bk@gmail.com</a>
@@ -909,15 +955,15 @@
               </div>
               <div class="update-row">
                 <span class="update-date">2026</span>
-                <span class="update-text">Extending <strong>TAPE</strong> (arXiv:2602.19633) — anchor-scored sequential graph merging for agentic LLM planning. <span class="badge">In progress</span></span>
+                <span class="update-text">Extending <strong>TAPE</strong> (arXiv:2602.19633) - anchor-scored sequential graph merging for agentic LLM planning. <span class="badge">In progress</span></span>
               </div>
               <div class="update-row">
                 <span class="update-date">2026</span>
-                <span class="update-text">Built <strong>Rack [Agentic Career Assistant]</strong> — RAG-based multi-step AI agent with vLLM inference and hallucination safeguards.</span>
+                <span class="update-text">Built <strong>Rack [Agentic Career Assistant]</strong> - RAG-based multi-step AI agent with vLLM inference and hallucination safeguards.</span>
               </div>
               <div class="update-row">
                 <span class="update-date">2025</span>
-                <span class="update-text">Fine-tuned <strong>StarCoder2-15B</strong> using LoRA/QLoRA — 70% GPU memory reduction, maintained quality.</span>
+                <span class="update-text">Fine-tuned <strong>StarCoder2-15B</strong> using LoRA/QLoRA - 70% GPU memory reduction, maintained quality.</span>
               </div>
             </div>
           </section>
@@ -1025,7 +1071,7 @@
                   <div class="exp-role">Junior Data Scientist</div>
                   <div class="exp-org">Robosoft Technologies</div>
                 </div>
-                <div class="exp-period">2019 – 2021</div>
+                <div class="exp-period">2020 – 2021</div>
                 <p class="exp-detail">At Robosoft, I built and deployed machine learning solutions for mobile app analytics, from large-scale data pipelines and EDA to predictive models that improved system performance, automated workflows, and reduced operational bottlenecks.</p>
               </div>
 
@@ -1034,7 +1080,7 @@
                   <div class="exp-role">Founder &amp; Lead Engineer</div>
                   <div class="exp-org">Cnotes.in</div>
                 </div>
-                <div class="exp-period">2020 – 2021</div>
+                <div class="exp-period">2019 – 2021</div>
                 <p class="exp-detail">Solo-built a full-stack CRM (LAMP + React) for Local Cable Operators — scaled to 50K+ users. Idempotent billing, audit-ready event logs, role-based auth.</p>
               </div>
 
@@ -1062,7 +1108,16 @@
                 <div class="pub-num">ii.</div>
                 <div>
                   <div class="pub-venue">IEEE · Published</div>
-                  <div class="pub-title">Prediction of CERN Electron Mass Collision using CATBoosting and LGBMR</div>
+                  <div class="pub-title-row">
+                    <div class="pub-title">Prediction of CERN Electron Mass Collision using CATBoosting and LGBMR</div>
+                    <a href="https://ieeexplore.ieee.org/abstract/document/9984588" target="_blank" rel="noopener noreferrer" class="pub-link" aria-label="Open IEEE publication: Prediction of CERN Electron Mass Collision using CATBoosting and LGBMR">
+                      <svg viewBox="0 0 24 24" class="pub-link-icon" aria-hidden="true">
+                        <path d="M14 3h7v7"></path>
+                        <path d="M10 14L21 3"></path>
+                        <path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"></path>
+                      </svg>
+                    </a>
+                  </div>
                   <p class="pub-desc">Ensemble ML applied at particle physics scale. CatBoost + LightGBM with advanced feature engineering — 99% accuracy on CERN electron mass collision prediction.</p>
                   <div class="tags">
                     <span class="tag">CatBoost</span><span class="tag">LightGBM</span><span class="tag">Ensemble ML</span><span class="tag">Physics</span>
@@ -1074,7 +1129,16 @@
                 <div class="pub-num">iii.</div>
                 <div>
                   <div class="pub-venue">IJNRD · Published</div>
-                  <div class="pub-title">Detecting Diabetic Retinopathy using Deep Learning</div>
+                  <div class="pub-title-row">
+                    <div class="pub-title">Detecting Diabetic Retinopathy using Deep Learning</div>
+                    <a href="https://ijnrd.org/viewpaperforall.php?paper=IJNRD2209173" target="_blank" rel="noopener noreferrer" class="pub-link" aria-label="Open IJNRD publication: Detecting Diabetic Retinopathy using Deep Learning">
+                      <svg viewBox="0 0 24 24" class="pub-link-icon" aria-hidden="true">
+                        <path d="M14 3h7v7"></path>
+                        <path d="M10 14L21 3"></path>
+                        <path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"></path>
+                      </svg>
+                    </a>
+                  </div>
                   <p class="pub-desc">Fully convolutional neural network for early-stage retinopathy screening. 93% accuracy, end-to-end clinical usability with TensorFlow and Django.</p>
                   <div class="tags">
                     <span class="tag">FCN</span><span class="tag">TensorFlow</span><span class="tag">Medical AI</span>
@@ -1086,7 +1150,16 @@
                 <div class="pub-num">iv.</div>
                 <div>
                   <div class="pub-venue">IEEE · Published</div>
-                  <div class="pub-title">Cirrhosis disease classification by using polynomial feature and XGBoosting</div>
+                  <div class="pub-title-row">
+                    <div class="pub-title">Cirrhosis disease classification by using polynomial feature and XGBoosting</div>
+                    <a href="https://ieeexplore.ieee.org/abstract/document/9984293" target="_blank" rel="noopener noreferrer" class="pub-link" aria-label="Open IEEE publication: Cirrhosis disease classification by using polynomial feature and XGBoosting">
+                      <svg viewBox="0 0 24 24" class="pub-link-icon" aria-hidden="true">
+                        <path d="M14 3h7v7"></path>
+                        <path d="M10 14L21 3"></path>
+                        <path d="M21 14v5a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5"></path>
+                      </svg>
+                    </a>
+                  </div>
                   <p class="pub-desc">Cirrhosis disease classification using polynomial feature engineering and XGBoost, improving diagnostic prediction accuracy. Applied machine learning techniques to enable early detection and cost-effective diagnosis in healthcare settings.</p>
                 </div>
               </div>
