@@ -866,6 +866,170 @@
       .proj-tiles { grid-template-columns: 1fr; }
     }
 
+    /* ─── MOBILE COLLAPSED HEADER ─── */
+
+    /* Compact strip — sits in normal flow, hidden by default */
+    .header-compact-row {
+      display: none; /* only shown on mobile via media query */
+      align-items: center;
+      gap: 0.75rem;
+      width: 100%;
+    }
+
+    .compact-photo {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 1.5px solid var(--faint);
+      flex-shrink: 0;
+    }
+
+    .compact-name {
+      font-family: var(--serif);
+      font-size: 1rem;
+      font-weight: 500;
+      letter-spacing: -0.01em;
+      color: var(--ink);
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .compact-expand-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border: 1px solid var(--faint);
+      border-radius: 50%;
+      background: transparent;
+      cursor: pointer;
+      color: var(--mid);
+      flex-shrink: 0;
+      -webkit-tap-highlight-color: transparent;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    .compact-expand-btn:active { background: rgba(0,0,0,0.06); }
+
+    .compact-expand-btn svg {
+      display: block;
+      transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      will-change: transform;
+    }
+
+    /* Chevron points up when overlay is open */
+    .chevron-up svg { transform: rotate(180deg); }
+
+    @media (max-width: 560px) {
+
+      /* ── BASE mobile state (full bio visible, at top of page) ── */
+      .header-inner {
+        padding: 1.2rem 1.2rem 0.9rem;
+        grid-template-columns: 1fr auto;
+        gap: 1rem;
+        align-items: start;
+        transition: box-shadow 0.3s ease;
+        overflow: hidden;
+      }
+
+      /* Bio block: always visible at top, fades on collapse */
+      .header-bio-block {
+        transition: opacity 0.28s ease, transform 0.28s ease;
+        will-change: opacity, transform;
+      }
+
+      /* Photo: visible in normal mobile state */
+      .header-right {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .bio-photo { width: 80px; height: 80px; }
+
+      /* Compact row: shown on mobile but opacity-hidden until collapsed */
+      .header-compact-row {
+        display: flex;
+        grid-column: 1 / -1;
+        height: 0;
+        overflow: hidden;
+        opacity: 0;
+        transition: height 0.32s cubic-bezier(0.4, 0, 0.2, 1),
+                    opacity 0.32s ease;
+        will-change: height, opacity;
+      }
+
+      /* ── COLLAPSED state ── */
+      .header-inner.is-collapsed {
+        box-shadow: 0 1px 14px rgba(0,0,0,0.08);
+      }
+
+      /* Compact strip expands into view */
+      .header-inner.is-collapsed .header-compact-row {
+        height: 44px;
+        opacity: 1;
+      }
+
+      /* Bio block + photo slide up and fade out */
+      .header-inner.is-collapsed .header-bio-block {
+        opacity: 0;
+        transform: translateY(-6px);
+        height: 0;
+        overflow: hidden;
+        pointer-events: none;
+        margin: 0;
+      }
+
+      .header-inner.is-collapsed .header-right {
+        opacity: 0;
+        height: 0;
+        overflow: hidden;
+        margin: 0;
+        pointer-events: none;
+      }
+
+      /* ── OVERLAY OPEN (chevron tapped while collapsed) ── */
+      /* Header expands back down over content — scroll body padding unchanged */
+      .header-inner.is-overlay-open .header-bio-block {
+        opacity: 1;
+        transform: none;
+        height: auto;
+        overflow: visible;
+        pointer-events: auto;
+      }
+
+      .header-inner.is-overlay-open .header-right {
+        opacity: 1;
+        height: auto;
+        overflow: visible;
+        pointer-events: auto;
+      }
+
+      .header-inner.is-overlay-open .header-compact-row {
+        height: 0;
+        opacity: 0;
+      }
+
+      .header-inner.is-overlay-open {
+        box-shadow: 0 4px 28px rgba(0,0,0,0.13);
+      }
+
+      /* Transitions for collapse/expand on all children */
+      .header-inner .header-right {
+        transition: opacity 0.28s ease, height 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+        will-change: opacity, height;
+        overflow: hidden;
+      }
+
+      .header-inner .header-bio-block {
+        transition: opacity 0.28s ease, transform 0.28s ease,
+                    height 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+      }
+    }
+
     /* ─── SMOOTH SCROLL HINT ─── */
     .scroll-hint {
       position: absolute;
@@ -889,6 +1053,16 @@
       height: 28px;
       background: linear-gradient(to bottom, var(--accent), transparent);
     }
+
+    .compact-title {
+  display: block;
+  font-family: var(--mono);
+  font-size: 0.55rem;
+  color: var(--accent);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-top: 0.05rem;
+}
   </style>
 </head>
 <body>
@@ -905,7 +1079,22 @@
   <!-- ─── FIXED HEADER ─── -->
   <header class="site-header" id="site-header">
     <div class="header-inner">
-      <div class="header-left">
+      <!-- Mobile compact row (shown when header is collapsed on scroll) -->
+      <div class="header-compact-row" id="headerCompactRow">
+        <img src="./tejweb2.jpg" class="compact-photo" alt="Tejas BK"
+          onerror="this.style.display='none'" />
+          
+        <span class="compact-name">Tejas Belakavadi Kemparaju
+          <span class="compact-title">AI/ML Engineer · Researcher</span>
+        </span>
+        <button class="compact-expand-btn" id="compactExpandBtn" aria-label="Expand profile">
+          <svg width="14" height="14" viewBox="0 0 14 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M2.5 5L7 9.5L11.5 5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="header-left header-bio-block">
         <div class="bio-title"> <b>AI/ML Engineer · Researcher</b></div>
         <h1 class="bio-name">Tejas Belakavadi Kemparaju</h1>
         <p class="bio-text" id="header-bio-text">
@@ -1337,6 +1526,101 @@
     window.addEventListener('scroll', () => {
       header.classList.toggle('scrolled', window.scrollY > 10);
     }, { passive: true });
+
+    // ─── MOBILE COLLAPSE ON SCROLL ───
+    // Only activates on screens ≤560px. Desktop is completely untouched.
+    const headerInner = document.querySelector('.header-inner');
+    const compactExpandBtn = document.getElementById('compactExpandBtn');
+
+    const COLLAPSE_THRESHOLD = 60;
+    let isCollapsed = false;
+    let isOverlayOpen = false;
+    let scrollTicking = false;
+
+    function collapseHeader() {
+      if (isCollapsed) return;
+      isCollapsed = true;
+      isOverlayOpen = false;
+      headerInner.classList.add('is-collapsed');
+      headerInner.classList.remove('is-overlay-open');
+      compactExpandBtn.classList.remove('chevron-up');
+      // After animation, set padding to compact height
+      setTimeout(() => {
+        if (isCollapsed && !isOverlayOpen) {
+          scrollBody.style.transition = 'padding-top 1s ease';
+          scrollBody.style.paddingTop = (header.getBoundingClientRect().height + 16) + 'px';
+        }
+      }, 340);
+    }
+
+    function expandHeader() {
+      if (!isCollapsed) return;
+      isCollapsed = false;
+      isOverlayOpen = false;
+      headerInner.classList.remove('is-collapsed');
+      headerInner.classList.remove('is-overlay-open');
+      compactExpandBtn.classList.remove('chevron-up');
+      // After animation completes, recalculate full padding
+      setTimeout(() => {
+        if (!isCollapsed) {
+          scrollBody.style.transition = 'padding-top 0.32s ease';
+          scrollBody.style.paddingTop = (header.getBoundingClientRect().height + 40) + 'px';
+        }
+      }, 340);
+    }
+
+    function openOverlay() {
+      isOverlayOpen = true;
+      headerInner.classList.add('is-overlay-open');
+      compactExpandBtn.classList.add('chevron-up');
+      // Don't change scroll-body padding — header floats over content
+    }
+
+    function closeOverlay() {
+      isOverlayOpen = false;
+      headerInner.classList.remove('is-overlay-open');
+      compactExpandBtn.classList.remove('chevron-up');
+    }
+
+    if (compactExpandBtn) {
+      compactExpandBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (isOverlayOpen) {
+          closeOverlay();
+        } else {
+          openOverlay();
+        }
+      });
+    }
+
+    // Tap anywhere outside header while overlay open → close
+    document.addEventListener('click', (e) => {
+      if (isOverlayOpen && !header.contains(e.target)) closeOverlay();
+    });
+
+    function onScrollCollapse() {
+      if (scrollTicking) return;
+      scrollTicking = true;
+      requestAnimationFrame(() => {
+        scrollTicking = false;
+        if (window.innerWidth > 560) {
+          if (isCollapsed) expandHeader();
+          return;
+        }
+        if (window.scrollY > COLLAPSE_THRESHOLD) {
+          if (!isCollapsed) collapseHeader();
+          else if (isOverlayOpen) closeOverlay(); // scrolling while overlay open → close it
+        } else {
+          if (isCollapsed) expandHeader();
+        }
+      });
+    }
+
+    window.addEventListener('scroll', onScrollCollapse, { passive: true });
+    window.addEventListener('resize', () => {
+      if (window.innerWidth > 560 && isCollapsed) expandHeader();
+      if (!isCollapsed) setHeaderHeight();
+    });
 
     // ─── SCROLL REVEAL ───
     const io = new IntersectionObserver(entries => {
