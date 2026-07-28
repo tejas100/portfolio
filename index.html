@@ -6,7 +6,7 @@
   <title>Tejas BK</title>
   <link rel="icon" href="/favicon.ico" sizes="any">
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@300;400;500&family=Outfit:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=JetBrains+Mono:wght@300;400;500&family=Outfit:wght@300;400;500&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&family=Special+Elite&display=swap" rel="stylesheet" />
   
   <meta property="og:title" content="Tejas BK — AI/ML Engineer" />
   <meta property="og:description" content="I build ML systems & LLM-powered agents. Founder of RackX and Cnotes." />
@@ -1063,9 +1063,252 @@
   text-transform: uppercase;
   margin-top: 0.05rem;
 }
+    /* ─── MODE SWITCH (under photo) ─── */
+    .mode-switch {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.15rem 0.3rem;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .mode-switch:focus-visible {
+      outline: 1px solid var(--accent);
+      outline-offset: 4px;
+      border-radius: 100px;
+    }
+
+    .ms-label {
+      font-family: var(--mono);
+      font-size: 0.55rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--mid);
+      opacity: 0.5;
+      transition: opacity 0.25s ease, color 0.25s ease;
+    }
+
+    .mode-switch[aria-checked="false"] .ms-label-left,
+    .mode-switch[aria-checked="true"] .ms-label-right {
+      opacity: 1;
+      color: var(--ink);
+    }
+
+    .ms-track {
+      position: relative;
+      width: 34px;
+      height: 18px;
+      border-radius: 100px;
+      background: rgba(0,0,0,0.06);
+      border: 1px solid var(--faint);
+      flex-shrink: 0;
+      transition: background 0.3s, border-color 0.3s;
+    }
+
+    .mode-switch:hover .ms-track { border-color: var(--mid); }
+
+    .ms-knob {
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--ink);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.25);
+      transition: transform 0.38s cubic-bezier(0.34, 1.45, 0.64, 1), background 0.3s;
+    }
+
+    .mode-switch[aria-checked="true"] .ms-knob { transform: translateX(16px); }
+    .mode-switch:active .ms-knob { transform: scale(0.82); }
+    .mode-switch[aria-checked="true"]:active .ms-knob { transform: translateX(16px) scale(0.82); }
+
+    /* ─── MODE CURTAIN (cut to black) ─── */
+    .mode-curtain {
+      position: fixed;
+      inset: 0;
+      background: #0b0906;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 300;
+      transition: opacity 0.26s ease;
+    }
+
+    .mode-curtain.on { opacity: 1; }
+
+    /* ─── FILM MODE THEME ─── */
+    body.film-mode {
+      --bg: #16120d;
+      --ink: #eae0cd;
+      --mid: #a09280;
+      --faint: #2f2820;
+      --accent: #d2a24c;
+      --accent-light: #251d12;
+    }
+
+    body.film-mode::before {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E");
+    }
+
+    body.film-mode::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 150; /* above the header glass so it grades seamlessly */
+      background: radial-gradient(ellipse at center, transparent 52%, rgba(0,0,0,0.38) 100%);
+    }
+
+    body.film-mode .header-inner {
+      background: rgba(22, 18, 13, 0.55);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+    }
+    body.film-mode .bio-photo,
+    body.film-mode .compact-photo {
+      filter: sepia(0.45) contrast(1.08) saturate(0.85) brightness(0.96);
+      border-color: rgba(210,162,76,0.45);
+    }
+    body.film-mode .bio-photo:hover { border-color: var(--accent); }
+    /* Photo swap crossfade */
+    .bio-photo, .compact-photo { transition: filter 0.4s ease, border-color 0.3s, opacity 0.25s ease; }
+    body.film-mode .bio-text a { border-bottom-color: rgba(210,162,76,0.35); }
+    body.film-mode .ms-track { background: rgba(255,255,255,0.05); }
+    body.film-mode .ms-knob { background: var(--accent); }
+    body.film-mode .section-label { font-family: 'Special Elite', var(--mono); letter-spacing: 0.2em; font-size: 0.72rem; }
+    body.film-mode .sidenav-dot { border-color: var(--faint); }
+    body.film-mode .avail-dot { background: var(--accent); }
+    body.film-mode .header-inner.is-collapsed { box-shadow: 0 1px 14px rgba(0,0,0,0.5); }
+
+    /* ─── FILM VIEW COMPONENTS ─── */
+    .film-hero { text-align: center; padding: 0.4rem 0 2.6rem; }
+
+    .film-kicker {
+      font-family: 'Special Elite', var(--mono);
+      font-size: 0.68rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    .film-title {
+      font-family: 'Playfair Display', var(--serif);
+      font-style: italic;
+      font-weight: 500;
+      font-size: 2rem;
+      line-height: 1.3;
+      max-width: 22ch;
+      margin: 0 auto 0.9rem;
+    }
+
+    .film-roles {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--mid);
+    }
+
+    .film-strip {
+      height: 24px;
+      border-top: 2px solid var(--faint);
+      border-bottom: 2px solid var(--faint);
+      background: repeating-linear-gradient(90deg, var(--faint) 0 10px, transparent 10px 24px);
+      background-size: 24px 7px;
+      background-repeat: repeat-x;
+      background-position: center;
+      opacity: 0.55;
+      margin-bottom: 2.8rem;
+    }
+
+    .film-work {
+      display: grid;
+      grid-template-columns: 56px 1fr;
+      gap: 1rem;
+      padding: 1.35rem 0;
+      border-bottom: 1px solid var(--faint);
+    }
+
+    .film-work:first-of-type { padding-top: 0.2rem; }
+    .film-work:last-of-type { border-bottom: none; }
+
+    .fw-index {
+      font-family: 'Special Elite', var(--mono);
+      font-size: 0.74rem;
+      color: var(--mid);
+      padding-top: 0.35rem;
+    }
+
+    .fw-type {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: var(--accent);
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin-bottom: 0.3rem;
+    }
+
+    .fw-title {
+      font-family: 'Playfair Display', var(--serif);
+      font-size: 1.18rem;
+      font-weight: 500;
+      line-height: 1.35;
+      margin-bottom: 0.35rem;
+    }
+
+    .fw-desc {
+      font-size: 0.85rem;
+      color: var(--mid);
+      line-height: 1.7;
+      margin-bottom: 0.45rem;
+    }
+
+    .fw-meta {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      letter-spacing: 0.12em;
+      color: var(--mid);
+      opacity: 0.75;
+      text-transform: uppercase;
+    }
+
+    .stills-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.9rem;
+    }
+
+    .still {
+      aspect-ratio: 3/2;
+      border: 1px solid var(--faint);
+      background: var(--accent-light);
+      overflow: hidden;
+    }
+
+    .still image-slot { display: block; width: 100%; height: 100%; }
+
+    .stills-note {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: var(--mid);
+      letter-spacing: 0.08em;
+      text-align: center;
+      margin-top: 0.8rem;
+      opacity: 0.7;
+    }
+
+    @media (max-width: 500px) {
+      .stills-grid { grid-template-columns: 1fr; }
+      .film-work { grid-template-columns: 44px 1fr; }
+    }
   </style>
 </head>
 <body>
+  <script src="./image-slot.js"></script>
 
   <nav class="sidenav" id="sidenav">
     <a class="sidenav-item" href="#updates"><span class="sidenav-label">Recent</span><span class="sidenav-dot"></span></a>
@@ -1076,12 +1319,22 @@
     <a class="sidenav-item" href="#contact"><span class="sidenav-label">Contact</span><span class="sidenav-dot"></span></a>
   </nav>
 
+  <nav class="sidenav" id="sidenavFilm" style="display:none">
+    <a class="sidenav-item" href="#film-works"><span class="sidenav-label">Works</span><span class="sidenav-dot"></span></a>
+    <a class="sidenav-item" href="#film-commercials"><span class="sidenav-label">Commercials</span><span class="sidenav-dot"></span></a>
+    <a class="sidenav-item" href="#film-audible"><span class="sidenav-label">Audible</span><span class="sidenav-dot"></span></a>
+    <a class="sidenav-item" href="#film-stills"><span class="sidenav-label">Stills</span><span class="sidenav-dot"></span></a>
+    <a class="sidenav-item" href="#film-craft"><span class="sidenav-label">Craft</span><span class="sidenav-dot"></span></a>
+    <a class="sidenav-item" href="#film-current"><span class="sidenav-label">Now</span><span class="sidenav-dot"></span></a>
+    <a class="sidenav-item" href="#film-contact"><span class="sidenav-label">Contact</span><span class="sidenav-dot"></span></a>
+  </nav>
+
   <!-- ─── FIXED HEADER ─── -->
   <header class="site-header" id="site-header">
     <div class="header-inner">
       <!-- Mobile compact row (shown when header is collapsed on scroll) -->
       <div class="header-compact-row" id="headerCompactRow">
-        <img src="./tejweb2.jpg" class="compact-photo" alt="Tejas BK"
+        <img src="./tejweb2.jpg" class="compact-photo" alt="Tejas BK" id="compactPhoto"
           onerror="this.style.display='none'" />
           
         <span class="compact-name">Tejas Belakavadi Kemparaju
@@ -1110,23 +1363,18 @@
       </div>
 
       <div class="header-right">
-        <img src="./tejweb2.jpg" class="bio-photo" alt="Tejas BK"
+        <img src="./tejweb2.jpg" class="bio-photo" alt="Tejas BK" id="bioPhoto"
           onerror="this.outerHTML='<div style=\'width:150px;height:150px;border-radius:50%;background:linear-gradient(135deg,#d5cfc7,#bfb8ae);border:2.5px solid var(--faint);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:2.5rem;color:#fff;font-style:italic;flex-shrink:0\'>T</div>'" />
+        <button class="mode-switch" id="modeSwitch" role="switch" aria-checked="false" aria-label="Switch between engineer and filmmaker portfolio">
+          <span class="ms-label ms-label-left">Engineer</span>
+          <span class="ms-track"><span class="ms-knob"></span></span>
+          <span class="ms-label ms-label-right">Filmmaker</span>
+        </button>
       </div>
     </div>
-
-    <!-- REGAL TOGGLE BAR -->
-    <div class="toggle-bar">
-      <span class="toggle-ornament">✦</span>
-      <div class="regal-toggle" id="modeToggle" role="switch" aria-checked="false" tabindex="0">
-        <div class="regal-pill" id="togglePill"></div>
-        <span class="regal-label">Professional</span>
-        <span class="regal-label">Personal</span>
-      </div>
-      <span class="toggle-ornament">✦</span>
-    </div>
-
   </header>
+
+  <div class="mode-curtain" id="modeCurtain" aria-hidden="true"></div>
 
   <!-- ─── SCROLLABLE BODY ─── -->
   <div class="scroll-body" id="scrollBody">
@@ -1404,100 +1652,160 @@
         </div><!-- /professionalView -->
 
 
-        <!-- ══════════ PERSONAL VIEW ══════════ -->
+        <!-- ══════════ FILMMAKER VIEW ══════════ -->
         <div class="content-view hidden" id="personalView">
 
-          <div class="personal-hero">
-            <p class="personal-tagline">Behind the code, there's a person chasing light and stories.</p>
-            <div class="personal-sub">Filmmaker · Photographer · Observer</div>
+          <div class="film-hero reveal">
+            <div class="film-kicker">A portfolio in light &amp; motion</div>
+            <p class="film-title">Stories are shot on patience, and cut on instinct.</p>
+            <div class="film-roles">Director · Cinematography · Edit</div>
           </div>
 
-          <!-- PLACEHOLDER FILM GRID -->
-          <section class="personal-section">
-            <div class="section-label">Work</div>
-            <div class="film-grid">
-              <div class="film-cell">
-                <div class="film-cell-inner">
-                  <div class="film-cell-icon">🎞</div>
-                  <span>Short Film</span>
-                </div>
-              </div>
-              <div class="film-cell">
-                <div class="film-cell-inner">
-                  <div class="film-cell-icon">📷</div>
-                  <span>Photography</span>
-                </div>
-              </div>
-              <div class="film-cell">
-                <div class="film-cell-inner">
-                  <div class="film-cell-icon">🎬</div>
-                  <span>Documentary</span>
-                </div>
-              </div>
-              <div class="film-cell">
-                <div class="film-cell-inner">
-                  <div class="film-cell-icon">🎵</div>
-                  <span>Music Video</span>
-                </div>
-              </div>
-            </div>
-            <p style="font-family:var(--mono);font-size:0.62rem;color:var(--mid);letter-spacing:0.08em;text-align:center;margin-top:0.75rem;">← Replace these placeholders with your actual work →</p>
-          </section>
+          <div class="film-strip" aria-hidden="true"></div>
 
-          <!-- FILMS / PROJECTS -->
-          <section class="personal-section">
-            <div class="section-label">Films &amp; Stories</div>
-            <div class="work-item">
-              <div class="work-type">Short Film</div>
-              <div class="work-title">Add your film title here</div>
-              <p class="work-desc">Brief description — where it was shot, what it explores, any screenings or awards.</p>
+          <!-- SELECTED WORKS -->
+          <section class="personal-section reveal" id="film-works">
+            <div class="section-label">Selected Works</div>
+            <div class="film-work">
+              <div class="fw-index">Nº 01</div>
+              <div>
+                <div class="fw-type">Short Film · 2025</div>
+                <h3 class="fw-title">Add your film title</h3>
+                <p class="fw-desc">One-line logline — where it was shot, what it explores, any screenings or awards.</p>
+                <div class="fw-meta">Dir. Tejas B.K. · Runtime · Color</div>
+              </div>
             </div>
-            <div class="work-item">
-              <div class="work-type">Photography Series</div>
-              <div class="work-title">Add your photo series here</div>
-              <p class="work-desc">What the series is about — the light, the people, the place.</p>
+            <div class="film-work">
+              <div class="fw-index">Nº 02</div>
+              <div>
+                <div class="fw-type">Documentary · 2024</div>
+                <h3 class="fw-title">Add your documentary title</h3>
+                <p class="fw-desc">The subject, the access, and why the story needed telling.</p>
+                <div class="fw-meta">Dir. &amp; DoP Tejas B.K. · Runtime · Color</div>
+              </div>
             </div>
-            <div class="work-item">
-              <div class="work-type">Music Video / Commercial</div>
-              <div class="work-title">Add your project here</div>
-              <p class="work-desc">Client, concept, and what made it interesting to make.</p>
+            <div class="film-work">
+              <div class="fw-index">Nº 03</div>
+              <div>
+                <div class="fw-type">Music Video · 2024</div>
+                <h3 class="fw-title">Add your music video title</h3>
+                <p class="fw-desc">Artist, concept, and what made it interesting to make.</p>
+                <div class="fw-meta">Dir. Tejas B.K. · Runtime · Color</div>
+              </div>
             </div>
           </section>
 
-          <!-- GEAR -->
-          <section class="personal-section">
-            <div class="section-label">Gear</div>
-            <p style="font-size:0.88rem;color:var(--mid);line-height:1.8;margin-bottom:0.75rem;">What I shoot with — add your actual setup here.</p>
-            <div class="gear-list">
-              <span class="tag">Camera Body</span>
-              <span class="tag">Primary Lens</span>
-              <span class="tag">Audio</span>
-              <span class="tag">Editing Suite</span>
-              <span class="tag">Color Grade</span>
+          <!-- COMMERCIALS -->
+          <section class="personal-section reveal" id="film-commercials">
+            <div class="section-label">Commercial Work</div>
+            <div class="film-work">
+              <div class="fw-index">Nº 01</div>
+              <div>
+                <div class="fw-type">Commercial · Year</div>
+                <h3 class="fw-title">Add the brand / campaign name</h3>
+                <p class="fw-desc">The brief, the concept, and where it ran — broadcast, social, or both.</p>
+                <div class="fw-meta">Client · Agency · Runtime</div>
+              </div>
+            </div>
+            <div class="film-work">
+              <div class="fw-index">Nº 02</div>
+              <div>
+                <div class="fw-type">Commercial · Year</div>
+                <h3 class="fw-title">Add the brand / campaign name</h3>
+                <p class="fw-desc">What you shot, on what, and the result for the client.</p>
+                <div class="fw-meta">Client · Agency · Runtime</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- AUDIBLE -->
+          <section class="personal-section reveal" id="film-audible">
+            <div class="section-label">Shorts for Audible</div>
+            <p style="font-size:0.88rem;color:var(--mid);line-height:1.8;margin-bottom:1rem;max-width:52ch;">
+              A series of short films shot for Audible — add a line about the collaboration here.
+            </p>
+            <div class="film-work">
+              <div class="fw-index">Nº 01</div>
+              <div>
+                <div class="fw-type">Short · Audible · Year</div>
+                <h3 class="fw-title">Add the short's title</h3>
+                <p class="fw-desc">The story or title it accompanied, and your role on it.</p>
+                <div class="fw-meta">For Audible · Runtime · Color</div>
+              </div>
+            </div>
+            <div class="film-work">
+              <div class="fw-index">Nº 02</div>
+              <div>
+                <div class="fw-type">Short · Audible · Year</div>
+                <h3 class="fw-title">Add the short's title</h3>
+                <p class="fw-desc">The story or title it accompanied, and your role on it.</p>
+                <div class="fw-meta">For Audible · Runtime · Color</div>
+              </div>
+            </div>
+          </section>
+
+          <!-- STILLS -->
+          <section class="personal-section reveal" id="film-stills">
+            <div class="section-label">Stills</div>
+            <div class="stills-grid">
+              <div class="still"><image-slot id="film-still-01" shape="rect" placeholder="Drop a film still"></image-slot></div>
+              <div class="still"><image-slot id="film-still-02" shape="rect" placeholder="Drop a film still"></image-slot></div>
+              <div class="still"><image-slot id="film-still-03" shape="rect" placeholder="Drop a film still"></image-slot></div>
+              <div class="still"><image-slot id="film-still-04" shape="rect" placeholder="Drop a film still"></image-slot></div>
+            </div>
+            <p class="stills-note">Frames from recent work — drag your own images onto the cells above.</p>
+          </section>
+
+          <!-- CRAFT -->
+          <section class="personal-section reveal" id="film-craft">
+            <div class="section-label">Craft &amp; Gear</div>
+            <div class="skills-cols">
+              <div>
+                <div class="skill-group-name">Camera &amp; Glass</div>
+                <div class="skill-vals">Add your camera body<br>Primary lenses · Filters<br>Support &amp; movement</div>
+              </div>
+              <div>
+                <div class="skill-group-name">Post &amp; Sound</div>
+                <div class="skill-vals">Editing suite · Color grade<br>Sound design · Mix<br>Delivery formats</div>
+              </div>
             </div>
           </section>
 
           <!-- CURRENTLY -->
-          <section class="personal-section">
-            <div class="section-label">Currently</div>
+          <section class="personal-section reveal" id="film-current">
+            <div class="section-label">Now Shooting</div>
             <div class="updates">
               <div class="update-row">
                 <span class="update-date">Now</span>
-                <span class="update-text">Add what you're currently shooting or working on creatively.</span>
+                <span class="update-text">Add what you're currently shooting or cutting.</span>
               </div>
               <div class="update-row">
                 <span class="update-date">2025</span>
-                <span class="update-text">Add a past creative milestone or project.</span>
+                <span class="update-text">Add a past creative milestone — a screening, a festival, a release.</span>
               </div>
             </div>
           </section>
 
-          <!-- FOOTER personal -->
+          <!-- CONTACT -->
+          <section class="personal-section reveal" id="film-contact">
+            <div class="section-label">Contact</div>
+            <p style="font-size:0.92rem; color:var(--mid); max-width:50ch; line-height:1.8; margin-bottom:1.5rem;">
+              Open for <strong style="color:var(--ink);">commissions, collaborations, and freelance work</strong> — shorts, docs, and music videos.
+            </p>
+            <a href="mailto:tejas55bk@gmail.com"
+   style="display:inline-flex;align-items:center;gap:0.45rem;font-family:var(--mono);font-size:0.76rem;letter-spacing:0.1em;text-transform:uppercase;color:var(--accent);border:1px solid var(--accent);padding:0.65rem 1.4rem;text-decoration:none;transition:background 0.2s,color 0.2s;"
+   onmouseover="this.style.background='var(--accent)';this.style.color='#16120d'"
+   onmouseout="this.style.background='transparent';this.style.color='var(--accent)'">
+  Roll Camera · Write to Me
+</a>
+          </section>
+
+          <!-- FOOTER film -->
           <footer class="footer">
             <p>tejasbk.dev · New Jersey, USA</p>
             <div class="avail">
-              <div class="avail-dot" style="background:#8b6914;"></div>
-              <p style="color:var(--mid)">Freelance open</p>
+              <div class="avail-dot"></div>
+              <p>Freelance open</p>
             </div>
           </footer>
 
@@ -1643,83 +1951,110 @@
       });
     }, { rootMargin: '-35% 0px -55% 0px' });
 
-    ['updates','projects','research','experience','contact'].forEach(id => {
+    ['updates','projects','research','experience','contact','film-works','film-commercials','film-audible','film-stills','film-craft','film-current','film-contact'].forEach(id => {
       const el = document.getElementById(id);
       if (el) sio.observe(el);
     });
 
-    // ─── REGAL TOGGLE ───
-    const toggle = document.getElementById('modeToggle');
-    const pill = document.getElementById('togglePill');
+    // ─── MODE SWITCH (Engineer ⇄ Filmmaker) ───
+    const switchBtn = document.getElementById('modeSwitch');
+    const curtain = document.getElementById('modeCurtain');
     const profView = document.getElementById('professionalView');
     const persView = document.getElementById('personalView');
-    const labels = toggle.querySelectorAll('.regal-label');
-    let isPersonal = false;
+    const sidenavPro = document.getElementById('sidenav');
+    const sidenavFilm = document.getElementById('sidenavFilm');
+    const bioTitle = document.querySelector('.bio-title');
+    const bioText = document.getElementById('header-bio-text');
+    const bioLinks = document.querySelector('.bio-links');
+    const compactTitle = document.querySelector('.compact-title');
 
-    function positionPill(animate) {
-      const activeLabel = labels[isPersonal ? 1 : 0];
-      if (!animate) pill.style.transition = 'none';
-      pill.style.width = activeLabel.offsetWidth + 'px';
-      pill.style.transform = isPersonal
-        ? `translateX(${labels[0].offsetWidth}px)`
-        : 'translateX(0)';
-      if (!animate) {
-        pill.getBoundingClientRect();
-        pill.style.transition = '';
-      }
+    const bioPhoto = document.getElementById('bioPhoto');
+    const compactPhoto = document.getElementById('compactPhoto');
+    // Filmmaker portrait — drop your on-set / behind-the-camera shot at this path
+    const FILM_PHOTO = './tejfilm.png';
+    const PRO_PHOTO = './tejweb2.jpg';
+
+    const proCopy = { title: bioTitle.innerHTML, text: bioText.innerHTML, links: bioLinks.innerHTML, compact: compactTitle.innerHTML };
+    const filmCopy = {
+      title: '<b>Filmmaker · Director · Editor</b>',
+      text: 'I tell stories with light and motion — short films, documentary work, and music videos. The same obsession that tunes a model tunes a frame: patience, iteration, taste. Shooting between <strong>New Jersey &amp; New York</strong>.',
+      links: '<a class="bio-link" href="mailto:tejas55bk@gmail.com">✉ tejas55bk@gmail.com</a><a class="bio-link" href="#" title="Add your Vimeo URL">↗ Vimeo</a><a class="bio-link" href="#" title="Add your Instagram URL">↗ Instagram</a><a class="bio-link" href="tel:8622140129">☏ 862-214-0129</a>',
+      compact: 'Filmmaker · Director'
+    };
+
+    // Soft mechanical click — like a projector switch
+    let audioCtx = null;
+    function premiumClick(on) {
+      try {
+        audioCtx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+        const t = audioCtx.currentTime;
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(on ? 540 : 680, t);
+        osc.frequency.exponentialRampToValueAtTime(on ? 170 : 210, t + 0.055);
+        gain.gain.setValueAtTime(0.09, t);
+        gain.gain.exponentialRampToValueAtTime(0.0001, t + 0.09);
+        osc.connect(gain).connect(audioCtx.destination);
+        osc.start(t); osc.stop(t + 0.1);
+      } catch (e) {}
     }
 
-    // Set initial pill position without animation
-    positionPill(false);
+    let isFilm = false, switching = false;
 
-    function switchMode(toPersonal) {
-      if (toPersonal === isPersonal) return;
-      isPersonal = toPersonal;
-      toggle.classList.toggle('is-personal', isPersonal);
-      toggle.setAttribute('aria-checked', isPersonal);
-      positionPill(true);
+    // Crossfade to the new portrait; if the film photo is missing, keep the
+    // current one (the sepia grade in film-mode still re-frames it).
+    function swapPhoto(img, src) {
+      if (!img || img.style.display === 'none') return;
+      const probe = new Image();
+      probe.onload = () => {
+        img.style.opacity = '0';
+        setTimeout(() => { img.src = src; img.style.opacity = '1'; }, 250);
+      };
+      probe.src = src;
+    }
 
-      const outgoing = isPersonal ? profView : persView;
-      const incoming = isPersonal ? persView : profView;
+    function applyMode(film) {
+      document.body.classList.toggle('film-mode', film);
+      switchBtn.setAttribute('aria-checked', film);
+      profView.classList.toggle('hidden', film);
+      profView.classList.toggle('visible', !film);
+      persView.classList.toggle('hidden', !film);
+      persView.classList.toggle('visible', film);
+      bioTitle.innerHTML = film ? filmCopy.title : proCopy.title;
+      bioText.innerHTML = film ? filmCopy.text : proCopy.text;
+      bioLinks.innerHTML = film ? filmCopy.links : proCopy.links;
+      compactTitle.innerHTML = film ? filmCopy.compact : proCopy.compact;
+      swapPhoto(bioPhoto, film ? FILM_PHOTO : PRO_PHOTO);
+      swapPhoto(compactPhoto, film ? FILM_PHOTO : PRO_PHOTO);
+      sidenavPro.style.display = film ? 'none' : '';
+      sidenavFilm.style.display = film ? '' : 'none';
+      setHeaderHeight();
+    }
 
-      outgoing.style.transition = 'opacity 0.35s ease, transform 0.35s ease, filter 0.35s ease';
-      outgoing.style.opacity = '0';
-      outgoing.style.transform = 'translateY(-12px)';
-      outgoing.style.filter = 'blur(3px)';
-
+    function switchMode(toFilm) {
+      if (toFilm === isFilm || switching) return;
+      switching = true; isFilm = toFilm;
+      premiumClick(toFilm);
+      switchBtn.setAttribute('aria-checked', toFilm);
+      curtain.classList.add('on');
       setTimeout(() => {
-        outgoing.classList.remove('visible');
-        outgoing.classList.add('hidden');
-
-        incoming.style.transition = 'none';
-        incoming.style.opacity = '0';
-        incoming.style.transform = 'translateY(16px)';
-        incoming.style.filter = 'blur(4px)';
-        incoming.classList.remove('hidden');
-        incoming.classList.add('visible');
-        incoming.getBoundingClientRect();
-
-        incoming.style.transition = 'opacity 0.48s cubic-bezier(0.4,0,0.2,1), transform 0.48s cubic-bezier(0.4,0,0.2,1), filter 0.48s ease';
-        incoming.style.opacity = '1';
-        incoming.style.transform = 'none';
-        incoming.style.filter = 'none';
-
-        if (!isPersonal) {
-          document.querySelectorAll('#professionalView .reveal').forEach(el => {
-            el.classList.remove('in');
-            setTimeout(() => io.observe(el), 100);
-          });
-        }
-
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      }, 340);
+        applyMode(toFilm);
+        window.scrollTo(0, 0);
+        try { localStorage.setItem('tbk-mode', toFilm ? 'film' : 'pro'); } catch (e) {}
+        setTimeout(() => { curtain.classList.remove('on'); switching = false; }, 90);
+      }, 270);
     }
 
-    toggle.addEventListener('click', () => switchMode(!isPersonal));
-    toggle.addEventListener('keydown', e => {
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); switchMode(!isPersonal); }
+    switchBtn.addEventListener('click', () => switchMode(!isFilm));
+    switchBtn.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); switchMode(!isFilm); }
     });
-    window.addEventListener('resize', () => positionPill(false));
+
+    // Restore last mode
+    try {
+      if (localStorage.getItem('tbk-mode') === 'film') { isFilm = true; applyMode(true); }
+    } catch (e) {}
   </script>
 </body>
 </html>
