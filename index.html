@@ -2006,10 +2006,18 @@
     // current one (the sepia grade in film-mode still re-frames it).
     function swapPhoto(img, src) {
       if (!img || img.style.display === 'none') return;
+      if (img.src.endsWith(src.replace('./', ''))) return; // already showing this photo
       const probe = new Image();
       probe.onload = () => {
         img.style.opacity = '0';
-        setTimeout(() => { img.src = src; img.style.opacity = '1'; }, 250);
+        setTimeout(() => {
+          img.src = src;
+          // Wait a frame so the browser paints the new src while still
+          // transparent, then fade in — avoids a flash of the old photo.
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => { img.style.opacity = '1'; });
+          });
+        }, 250);
       };
       probe.src = src;
     }
