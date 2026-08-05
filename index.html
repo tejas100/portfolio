@@ -1162,7 +1162,7 @@
       stroke-width: 1.6;
       stroke-linecap: round;
       stroke-linejoin: round;
-      transition: fill 0.4s ease, stroke 0.4s ease;
+      transition: fill 0.4s ease, stroke 0.4s ease, d 0.9s cubic-bezier(0.65, 0, 0.35, 1);
     }
 
     .pip-line {
@@ -1171,10 +1171,22 @@
       stroke-width: 1.6;
       stroke-linecap: round;
       stroke-linejoin: round;
-      transition: stroke 0.4s ease;
+      transition: stroke 0.4s ease, opacity 0.5s ease, d 0.9s cubic-bezier(0.65, 0, 0.35, 1);
     }
 
-    .pip-eye { fill: var(--ink); transition: transform 0.15s ease, fill 0.4s ease; }
+    .pip-eye {
+      fill: var(--ink);
+      transition: transform 0.15s ease, fill 0.4s ease, opacity 0.4s ease;
+    }
+
+    .pip-lash {
+      fill: none;
+      stroke: var(--ink);
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
 
     .pip-float {
       animation: pip-breathe 4.4s ease-in-out infinite;
@@ -1188,11 +1200,21 @@
 
     .pip:hover .pip-float { animation-play-state: paused; }
 
+    .pip.sleeping .pip-float {
+      animation: pip-breathe-sleep 3.2s ease-in-out infinite;
+    }
+
+    @keyframes pip-breathe-sleep {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-1px) scale(1.012); }
+    }
+
     .pip-shadow {
       fill: var(--ink);
       opacity: 0.08;
       animation: pip-shadow-pulse 4.4s ease-in-out infinite;
       transform-origin: 32px 58px;
+      transition: transform 0.9s cubic-bezier(0.65, 0, 0.35, 1);
     }
 
     @keyframes pip-shadow-pulse {
@@ -1203,6 +1225,7 @@
     .pip-tail {
       transform-origin: 46px 44px;
       animation: pip-tail-idle 3.8s ease-in-out infinite;
+      transition: d 0.9s cubic-bezier(0.65, 0, 0.35, 1);
     }
 
     @keyframes pip-tail-idle {
@@ -1210,16 +1233,93 @@
       50% { transform: rotate(6deg); }
     }
 
-    .pip-ear-l { transform-origin: 20px 20px; }
-    .pip-ear-r { transform-origin: 44px 20px; }
+    .pip.sleeping .pip-tail {
+      animation: pip-tail-curl 5s ease-in-out infinite;
+    }
+
+    @keyframes pip-tail-curl {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(2deg); }
+    }
+
+    .pip-ear-l { transform-origin: 18px 21px; transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1), d 0.8s ease; }
+    .pip-ear-r { transform-origin: 46px 21px; transition: transform 0.8s cubic-bezier(0.65, 0, 0.35, 1), d 0.8s ease; }
+
+    .pip.sleeping .pip-ear-l { transform: translate(1px, 3px) rotate(-42deg); }
+    .pip.sleeping .pip-ear-r { transform: translate(-1px, 3px) rotate(42deg); }
+
+    /* Slow ear wiggle while asleep — reads as dreaming, not restless */
+    .pip.sleeping .pip-ear-l.wiggle { animation: pip-ear-wiggle-l 0.9s ease; }
+    .pip.sleeping .pip-ear-r.wiggle { animation: pip-ear-wiggle-r 0.9s ease; }
+
+    @keyframes pip-ear-wiggle-l {
+      0%, 100% { transform: translate(1px, 3px) rotate(-42deg); }
+      50% { transform: translate(1px, 3px) rotate(-32deg); }
+    }
+
+    @keyframes pip-ear-wiggle-r {
+      0%, 100% { transform: translate(-1px, 3px) rotate(42deg); }
+      50% { transform: translate(-1px, 3px) rotate(32deg); }
+    }
 
     .pip.blinking .pip-eye { transform: scaleY(0.1); }
 
-    .pip-ear-l.twitch { animation: pip-ear-twitch 0.42s ease; }
+    .pip.sleeping .pip-eye { opacity: 0; }
+    .pip.sleeping .pip-lash { opacity: 1; }
 
-    @keyframes pip-ear-twitch {
+    /* Legs tuck under the body when curled up */
+    .pip-leg { transition: opacity 0.5s ease; }
+    .pip.sleeping .pip-leg { opacity: 0; }
+
+    /* Body settles into a lower, wider "loaf" curl */
+    .pip.sleeping #pipBody {
+      d: path("M32 24 C 47 24 53 32 53 39 C 53 46 46 50 32 50 C 18 50 11 46 11 39 C 11 32 17 24 32 24 Z");
+    }
+
+    /* Tail wraps forward around the curled body instead of idling out back */
+    .pip.sleeping #pipTail { d: path("M49 38 Q46 49 33 49.5"); }
+
+    /* Muzzle softens into a small sleeping curve, shifted down with the settled body */
+    .pip.sleeping #pipMuzzle { d: path("M28 42 Q32 44.5 36 42"); opacity: 0.6; }
+
+    .pip-ear-l.twitch { animation: pip-ear-twitch-l 0.42s ease; }
+    .pip-ear-r.twitch { animation: pip-ear-twitch-r 0.42s ease; }
+
+    @keyframes pip-ear-twitch-l {
       0%, 100% { transform: rotate(0deg); }
       50% { transform: rotate(-15deg); }
+    }
+
+    @keyframes pip-ear-twitch-r {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(15deg); }
+    }
+
+    /* Woken up with a startled little flick of both ears */
+    .pip-ear-l.wake { animation: pip-ear-twitch-l 0.5s ease; }
+    .pip-ear-r.wake { animation: pip-ear-twitch-r 0.5s ease; }
+
+    /* ─── ZZZ (sleep indicator) ─── */
+    .pip-zzz {
+      position: absolute;
+      top: -2px;
+      right: 2px;
+      font-family: var(--serif);
+      font-style: italic;
+      font-size: 0.8rem;
+      color: var(--mid);
+      opacity: 0;
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .pip.sleeping .pip-zzz { animation: pip-zzz-float 2.8s ease-in infinite; }
+
+    @keyframes pip-zzz-float {
+      0% { opacity: 0; transform: translate(0, 4px) scale(0.7); }
+      15% { opacity: 0.85; }
+      75% { opacity: 0.5; }
+      100% { opacity: 0; transform: translate(9px, -18px) scale(1.05); }
     }
 
     .pip-bubble {
@@ -1258,7 +1358,10 @@
     .pip-bubble.show { opacity: 1; transform: translateY(0) scale(1); }
 
     @media (prefers-reduced-motion: reduce) {
-      .pip-float, .pip-shadow, .pip-tail, .pip-ear-l.twitch { animation: none; }
+      .pip-float, .pip-shadow, .pip-tail, .pip-ear-l.twitch, .pip-ear-r.twitch,
+      .pip-ear-l.wake, .pip-ear-r.wake, .pip-ear-l.wiggle, .pip-ear-r.wiggle,
+      .pip-zzz { animation: none !important; }
+      .pip.sleeping .pip-zzz { opacity: 0.6; }
     }
 
     @media (max-width: 480px) {
@@ -1974,10 +2077,16 @@
       const bubble = document.getElementById('pipBubble');
       const eyesGroup = document.getElementById('pipEyes');
       const earL = document.getElementById('pipEarL');
+      const earR = document.getElementById('pipEarR');
+      const tail = document.getElementById('pipTail');
+      const body = document.getElementById('pipBody');
+      const legL = document.getElementById('pipLegL');
+      const legR = document.getElementById('pipLegR');
+      const muzzle = document.getElementById('pipMuzzle');
       const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
       const STORAGE_KEY = 'tbk-pip';
-      let memory = { visits: 0, lastSeenLine: null };
+      let memory = { visits: 0 };
       try {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) memory = Object.assign(memory, JSON.parse(raw));
@@ -2021,11 +2130,13 @@
           const back = [
             "oh hey, you're back",
             "welcome back",
+            "missed having someone to bother",
             memory.visits > 4 ? "you keep coming back — I like that" : "good to see you again",
-          ];
+            memory.visits > 8 ? "at this point we're basically friends" : null,
+          ].filter(Boolean);
           return pickFresh(back);
         }
-        return pickFresh([hourGreeting(), "hi, I'm Pip — I live down here"]);
+        return pickFresh([hourGreeting(), "hi, I'm Pip — I live down here", "new here? I'm the doorman"]);
       }
 
       function currentSectionId() {
@@ -2044,12 +2155,12 @@
       }
 
       const sectionLines = {
-        updates: ["this part's freshest", "the recent stuff, yeah"],
-        projects: ["RackX is the one I'd start with", "these took longer than they look like they did"],
-        experience: ["the resume part, but readable", "this is the receipts section"],
-        research: ["this is the part he's proudest of", "TAPE's still being extended, quietly"],
-        techstack: ["the stack, unglamorously listed", "yes, all of that, at once, sometimes"],
-        contact: ["go on, say hi to him too", "he actually replies to these"],
+        updates: ["this part's freshest", "the recent stuff, yeah", "he updates this more than his sleep schedule"],
+        projects: ["RackX is the one I'd start with", "these took longer than they look like they did", "each one has a small disaster story behind it"],
+        experience: ["the resume part, but readable", "this is the receipts section", "Uber, mostly RAG and fraud pipelines"],
+        research: ["this is the part he's proudest of", "TAPE's still being extended, quietly", "papers are just very long changelogs"],
+        techstack: ["the stack, unglamorously listed", "yes, all of that, at once, sometimes", "half of this he learned at 2am"],
+        contact: ["go on, say hi to him too", "he actually replies to these", "faster than I do, probably"],
         'film-works': ["different side of him, this one", "same eye, different lens"],
         'film-current': ["what he's shooting lately"],
       };
@@ -2062,22 +2173,82 @@
         const filler = [
           "still training…",
           "gradients descending nicely, hope",
-          "the little dot on my head is doing something, promise",
           document.body.classList.contains('film-mode') ? "sepia looks good on you too" : "01010000 01101001 01110000",
           "click around, I don't mind",
+          "I don't do much, but I mean well",
+          "this site's held together with duct tape and late nights",
+          "ask him about the bugs sometime, not me though",
+          "I'm mostly here for company",
         ];
         return pickFresh(filler);
       }
 
       function clickLine() {
         const elapsed = Date.now() - sessionStart;
-        if (elapsed > 90000) return pickFresh(["still here? I respect it", "you've been at this a while — good sign or bad?"]);
+        if (elapsed > 90000) return pickFresh(["still here? I respect it", "you've been at this a while — good sign or bad?", "you're either very interested or very lost"]);
         return contextLine();
       }
 
-      // idle blink
+      // ─── SLEEP / WAKE ───
+      // Rather than rescheduling a timeout on every single mousemove firing
+      // (which never lets 24s pass while you're actively reading), track a
+      // last-activity timestamp and check it on a slow interval. Falls
+      // asleep once that timestamp is old enough.
+      const SLEEP_AFTER_MS = 10000;
+      let lastActivity = Date.now();
+      let isAsleep = false;
+      let wiggleTimer = null;
+
+      function markActivity() {
+        lastActivity = Date.now();
+      }
+
+      function fallAsleep() {
+        if (isAsleep) return;
+        isAsleep = true;
+        el.classList.add('sleeping');
+        el.setAttribute('aria-label', 'Pip, curled up asleep — click to wake it');
+        eyesGroup.style.transform = '';
+        scheduleWiggle();
+      }
+
+      function scheduleWiggle() {
+        clearTimeout(wiggleTimer);
+        wiggleTimer = setTimeout(() => {
+          if (!isAsleep) return;
+          const ear = Math.random() < 0.5 ? earL : earR;
+          const cls = ear === earL ? 'wiggle' : 'wiggle';
+          ear.classList.remove('wiggle');
+          void ear.getBBox();
+          ear.classList.add('wiggle');
+          scheduleWiggle();
+        }, 3200 + Math.random() * 3400);
+      }
+
+      function wakeUp(sayHi) {
+        clearTimeout(wiggleTimer);
+        markActivity();
+        if (isAsleep) {
+          isAsleep = false;
+          el.classList.remove('sleeping');
+          el.setAttribute('aria-label', 'Pip, a small companion — click to say hi');
+          earL.classList.remove('wake'); void earL.getBBox(); earL.classList.add('wake');
+          earR.classList.remove('wake'); void earR.getBBox(); earR.classList.add('wake');
+          if (sayHi) say(pickFresh(["oh — hi", "hm? oh, hey", "*yawn* — hi"]), 2200);
+        }
+      }
+
+      // Check every couple seconds whether it's been quiet long enough to nap.
+      // Cheap and predictable — no per-mousemove timer churn.
+      if (!reduceMotion) {
+        setInterval(() => {
+          if (!isAsleep && Date.now() - lastActivity >= SLEEP_AFTER_MS) fallAsleep();
+        }, 1500);
+      }
+
+      // idle blink (paused while asleep — sleep uses closed lashes instead)
       function blinkLoop() {
-        if (!reduceMotion) {
+        if (!reduceMotion && !isAsleep) {
           el.classList.add('blinking');
           setTimeout(() => el.classList.remove('blinking'), 140);
         }
@@ -2085,13 +2256,14 @@
       }
       setTimeout(blinkLoop, 1600);
 
-      // subtle cursor tracking
+      // subtle cursor tracking (skipped while asleep)
       let raf = null;
       document.addEventListener('mousemove', (e) => {
         if (reduceMotion) return;
         if (raf) return;
         raf = requestAnimationFrame(() => {
           raf = null;
+          if (isAsleep) return;
           const rect = el.getBoundingClientRect();
           const cx = rect.left + rect.width / 2;
           const cy = rect.top + rect.height / 2;
@@ -2101,20 +2273,28 @@
         });
       }, { passive: true });
 
+      // Any real activity anywhere on the page marks the clock — cheap timestamp
+      // write, not a timer reschedule, so it can't cause the churn the old
+      // per-mousemove setTimeout approach did.
+      ['mousemove', 'scroll', 'keydown', 'click'].forEach(evt => {
+        document.addEventListener(evt, markActivity, { passive: true });
+      });
+
       let greeted = false;
       let hoverTimer = null;
       el.addEventListener('mouseenter', () => {
+        if (isAsleep) { wakeUp(true); return; }
         if (greeted) return;
         hoverTimer = setTimeout(() => { greeted = true; say(greetingLine(), 2600); }, 220);
       });
       el.addEventListener('mouseleave', () => clearTimeout(hoverTimer));
 
       el.addEventListener('click', () => {
-        earL.classList.remove('twitch');
-        void earL.getBBox();
-        earL.classList.add('twitch');
+        if (isAsleep) { wakeUp(true); greeted = true; return; }
+        earL.classList.remove('twitch'); void earL.getBBox(); earL.classList.add('twitch');
         say(greeted ? clickLine() : greetingLine());
         greeted = true;
+        markActivity();
       });
 
       el.addEventListener('keydown', (e) => {
@@ -2126,6 +2306,7 @@
       const modeBtn = document.getElementById('modeSwitch');
       if (modeBtn) {
         modeBtn.addEventListener('click', () => {
+          if (isAsleep) wakeUp(false);
           if (sawModeSwitch) return;
           sawModeSwitch = true;
           setTimeout(() => {
@@ -2136,7 +2317,7 @@
 
       // Unprompted nudge if you've been reading a while without touching Pip
       setTimeout(() => {
-        if (!greeted) { greeted = true; say(pickFresh(["psst — down here", "I've been waving for a bit"]), 2600); }
+        if (!greeted && !isAsleep) { greeted = true; say(pickFresh(["psst — down here", "I've been waving for a bit", "hi, in case you hadn't noticed me"]), 2600); }
       }, 14000);
     }
 
@@ -2382,24 +2563,27 @@
   </script>
 
   <!-- ─── PIP ─── -->
-  <div class="pip" id="pip" role="button" tabindex="0" aria-label="Pip, a small companion — click to say hi">
+  <div class="pip" id="pip" role="button" tabindex="0" aria-label="Pip, a small companion — click to say hi, or let it sleep">
     <div class="pip-bubble" id="pipBubble"></div>
+    <div class="pip-zzz" aria-hidden="true">z z z</div>
     <svg class="pip-svg" viewBox="0 0 64 64" aria-hidden="true">
-      <ellipse class="pip-shadow" cx="32" cy="58" rx="15" ry="3"></ellipse>
+      <ellipse class="pip-shadow" id="pipShadow" cx="32" cy="58" rx="15" ry="3"></ellipse>
       <g class="pip-float">
-        <path class="pip-line pip-tail" d="M46 44 Q56 42 54 32" fill="none"></path>
+        <path class="pip-line pip-tail" id="pipTail" d="M46 44 Q56 42 54 32" fill="none"></path>
         <path class="pip-body-path pip-ear-l" id="pipEarL" d="M16 22 L13 9 Q13 6 17 8 L23 20 Z"></path>
-        <path class="pip-body-path pip-ear-r" d="M48 22 L51 9 Q51 6 47 8 L41 20 Z"></path>
+        <path class="pip-body-path pip-ear-r" id="pipEarR" d="M48 22 L51 9 Q51 6 47 8 L41 20 Z"></path>
         <path class="pip-line" d="M17 18 L16 12" opacity="0.5"></path>
         <path class="pip-line" d="M47 18 L48 12" opacity="0.5"></path>
-        <path class="pip-body-path" d="M32 12 C 44 12 50 21 50 30 C 50 40 45 47 32 47 C 19 47 14 40 14 30 C 14 21 20 12 32 12 Z"></path>
+        <path class="pip-body-path" id="pipBody" d="M32 12 C 44 12 50 21 50 30 C 50 40 45 47 32 47 C 19 47 14 40 14 30 C 14 21 20 12 32 12 Z"></path>
         <g class="pip-eyes" id="pipEyes">
           <circle class="pip-eye" cx="25" cy="30" r="2.3"></circle>
           <circle class="pip-eye" cx="39" cy="30" r="2.3"></circle>
         </g>
-        <path class="pip-line" d="M28 37 Q32 40 36 37" opacity="0.85"></path>
-        <path class="pip-line" d="M23 46 L22 50"></path>
-        <path class="pip-line" d="M41 46 L42 50"></path>
+        <path class="pip-lash" id="pipLashL" d="M22 30 Q25 32.4 28 30"></path>
+        <path class="pip-lash" id="pipLashR" d="M36 30 Q39 32.4 42 30"></path>
+        <path class="pip-line" id="pipMuzzle" d="M28 37 Q32 40 36 37" opacity="0.85"></path>
+        <path class="pip-line pip-leg" id="pipLegL" d="M23 46 L22 50"></path>
+        <path class="pip-line pip-leg" id="pipLegR" d="M41 46 L42 50"></path>
       </g>
     </svg>
   </div>
