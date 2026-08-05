@@ -1139,6 +1139,133 @@
 
     .mode-curtain.on { opacity: 1; }
 
+    /* ─── PIP (companion) ───
+       Uses var(--ink)/var(--bg)/var(--accent) throughout, so it re-skins
+       itself automatically when film-mode swaps those variables — no
+       separate theme needed. */
+    .pip {
+      position: fixed;
+      right: 1.9rem;
+      bottom: 1.9rem;
+      z-index: 90;
+      width: 58px;
+      height: 58px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .pip-svg { width: 100%; height: 100%; overflow: visible; display: block; }
+
+    .pip-body-path {
+      fill: var(--bg);
+      stroke: var(--ink);
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: fill 0.4s ease, stroke 0.4s ease;
+    }
+
+    .pip-line {
+      fill: none;
+      stroke: var(--ink);
+      stroke-width: 1.6;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: stroke 0.4s ease;
+    }
+
+    .pip-eye { fill: var(--ink); transition: transform 0.15s ease, fill 0.4s ease; }
+
+    .pip-float {
+      animation: pip-breathe 4.4s ease-in-out infinite;
+      transform-origin: 32px 40px;
+    }
+
+    @keyframes pip-breathe {
+      0%, 100% { transform: translateY(0) rotate(0deg); }
+      50% { transform: translateY(-2.5px) rotate(-0.6deg); }
+    }
+
+    .pip:hover .pip-float { animation-play-state: paused; }
+
+    .pip-shadow {
+      fill: var(--ink);
+      opacity: 0.08;
+      animation: pip-shadow-pulse 4.4s ease-in-out infinite;
+      transform-origin: 32px 58px;
+    }
+
+    @keyframes pip-shadow-pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(0.85); }
+    }
+
+    .pip-tail {
+      transform-origin: 46px 44px;
+      animation: pip-tail-idle 3.8s ease-in-out infinite;
+    }
+
+    @keyframes pip-tail-idle {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(6deg); }
+    }
+
+    .pip-ear-l { transform-origin: 20px 20px; }
+    .pip-ear-r { transform-origin: 44px 20px; }
+
+    .pip.blinking .pip-eye { transform: scaleY(0.1); }
+
+    .pip-ear-l.twitch { animation: pip-ear-twitch 0.42s ease; }
+
+    @keyframes pip-ear-twitch {
+      0%, 100% { transform: rotate(0deg); }
+      50% { transform: rotate(-15deg); }
+    }
+
+    .pip-bubble {
+      position: absolute;
+      bottom: calc(100% + 12px);
+      right: -6px;
+      background: var(--ink);
+      color: var(--bg);
+      font-family: var(--mono);
+      font-size: 0.67rem;
+      letter-spacing: 0.01em;
+      padding: 0.45rem 0.7rem;
+      border-radius: 8px;
+      max-width: 220px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      opacity: 0;
+      transform: translateY(4px) scale(0.96);
+      transform-origin: bottom right;
+      transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1),
+                  background 0.4s ease, color 0.4s ease;
+      pointer-events: none;
+    }
+
+    .pip-bubble::after {
+      content: '';
+      position: absolute;
+      top: 100%;
+      right: 14px;
+      border: 5px solid transparent;
+      border-top-color: var(--ink);
+      transition: border-top-color 0.4s ease;
+    }
+
+    .pip-bubble.show { opacity: 1; transform: translateY(0) scale(1); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .pip-float, .pip-shadow, .pip-tail, .pip-ear-l.twitch { animation: none; }
+    }
+
+    @media (max-width: 480px) {
+      .pip { right: 1.1rem; bottom: 1.1rem; width: 48px; height: 48px; }
+      .pip-bubble { font-size: 0.62rem; max-width: 170px; }
+    }
+
     /* ─── FILM MODE THEME ─── */
     body.film-mode {
       --bg: #16120d;
@@ -1830,6 +1957,195 @@
     setHeaderHeight();
     window.addEventListener('resize', setHeaderHeight);
 
+    // ─── PIP ───
+    // A small companion that lives in the corner. Not a scripted mascot —
+    // its lines are picked from what's actually happening: time of day,
+    // how long you've lingered, whether you're a returning visitor, which
+    // section you're reading, and whether you're in engineer or filmmaker
+    // mode. It repeats itself as little as possible in a single sitting.
+    //
+    // Its markup sits at the end of <body>, after this script tag, so we
+    // wait for DOMContentLoaded rather than running immediately — otherwise
+    // getElementById('pip') returns null before the element even exists.
+    function initPip() {
+      const el = document.getElementById('pip');
+      if (!el) return;
+
+      const bubble = document.getElementById('pipBubble');
+      const eyesGroup = document.getElementById('pipEyes');
+      const earL = document.getElementById('pipEarL');
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      const STORAGE_KEY = 'tbk-pip';
+      let memory = { visits: 0, lastSeenLine: null };
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) memory = Object.assign(memory, JSON.parse(raw));
+      } catch (e) {}
+      memory.visits += 1;
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(memory)); } catch (e) {}
+
+      const usedThisSession = new Set();
+      let bubbleTimer = null;
+      let sessionStart = Date.now();
+
+      function say(text, duration) {
+        if (!text) return;
+        bubble.textContent = text;
+        bubble.classList.add('show');
+        clearTimeout(bubbleTimer);
+        bubbleTimer = setTimeout(() => bubble.classList.remove('show'), duration || 3200);
+      }
+
+      // Pick a line that hasn't been said yet this session, from a pool
+      // built fresh each time based on current context — so the *pool*
+      // changes as the visit goes on, not just which index gets picked.
+      function pickFresh(pool) {
+        const fresh = pool.filter(l => !usedThisSession.has(l));
+        const chosen = (fresh.length ? fresh : pool)[Math.floor(Math.random() * (fresh.length ? fresh.length : pool.length))];
+        usedThisSession.add(chosen);
+        return chosen;
+      }
+
+      function hourGreeting() {
+        const h = new Date().getHours();
+        if (h < 5) return "you're up late — same";
+        if (h < 12) return "morning. coffee first, or straight to the code?";
+        if (h < 17) return "hi, I'm Pip";
+        if (h < 21) return "evening scroll?";
+        return "burning the midnight oil too";
+      }
+
+      function greetingLine() {
+        if (memory.visits > 1) {
+          const back = [
+            "oh hey, you're back",
+            "welcome back",
+            memory.visits > 4 ? "you keep coming back — I like that" : "good to see you again",
+          ];
+          return pickFresh(back);
+        }
+        return pickFresh([hourGreeting(), "hi, I'm Pip — I live down here"]);
+      }
+
+      function currentSectionId() {
+        const film = document.body.classList.contains('film-mode');
+        const ids = film
+          ? ['film-works', 'film-commercials', 'film-audible', 'film-stills', 'film-craft', 'film-current', 'film-contact']
+          : ['updates', 'projects', 'experience', 'research', 'techstack', 'contact'];
+        let best = null, bestTop = -Infinity;
+        for (const id of ids) {
+          const node = document.getElementById(id);
+          if (!node) continue;
+          const rect = node.getBoundingClientRect();
+          if (rect.top <= 140 && rect.top > bestTop) { bestTop = rect.top; best = id; }
+        }
+        return best;
+      }
+
+      const sectionLines = {
+        updates: ["this part's freshest", "the recent stuff, yeah"],
+        projects: ["RackX is the one I'd start with", "these took longer than they look like they did"],
+        experience: ["the resume part, but readable", "this is the receipts section"],
+        research: ["this is the part he's proudest of", "TAPE's still being extended, quietly"],
+        techstack: ["the stack, unglamorously listed", "yes, all of that, at once, sometimes"],
+        contact: ["go on, say hi to him too", "he actually replies to these"],
+        'film-works': ["different side of him, this one", "same eye, different lens"],
+        'film-current': ["what he's shooting lately"],
+      };
+
+      function contextLine() {
+        const section = currentSectionId();
+        if (section && sectionLines[section] && Math.random() < 0.55) {
+          return pickFresh(sectionLines[section]);
+        }
+        const filler = [
+          "still training…",
+          "gradients descending nicely, hope",
+          "the little dot on my head is doing something, promise",
+          document.body.classList.contains('film-mode') ? "sepia looks good on you too" : "01010000 01101001 01110000",
+          "click around, I don't mind",
+        ];
+        return pickFresh(filler);
+      }
+
+      function clickLine() {
+        const elapsed = Date.now() - sessionStart;
+        if (elapsed > 90000) return pickFresh(["still here? I respect it", "you've been at this a while — good sign or bad?"]);
+        return contextLine();
+      }
+
+      // idle blink
+      function blinkLoop() {
+        if (!reduceMotion) {
+          el.classList.add('blinking');
+          setTimeout(() => el.classList.remove('blinking'), 140);
+        }
+        setTimeout(blinkLoop, 2400 + Math.random() * 3600);
+      }
+      setTimeout(blinkLoop, 1600);
+
+      // subtle cursor tracking
+      let raf = null;
+      document.addEventListener('mousemove', (e) => {
+        if (reduceMotion) return;
+        if (raf) return;
+        raf = requestAnimationFrame(() => {
+          raf = null;
+          const rect = el.getBoundingClientRect();
+          const cx = rect.left + rect.width / 2;
+          const cy = rect.top + rect.height / 2;
+          const dx = Math.max(-1, Math.min(1, (e.clientX - cx) / 320));
+          const dy = Math.max(-1, Math.min(1, (e.clientY - cy) / 320));
+          eyesGroup.style.transform = `translate(${dx * 1.5}px, ${dy * 1.5}px)`;
+        });
+      }, { passive: true });
+
+      let greeted = false;
+      let hoverTimer = null;
+      el.addEventListener('mouseenter', () => {
+        if (greeted) return;
+        hoverTimer = setTimeout(() => { greeted = true; say(greetingLine(), 2600); }, 220);
+      });
+      el.addEventListener('mouseleave', () => clearTimeout(hoverTimer));
+
+      el.addEventListener('click', () => {
+        earL.classList.remove('twitch');
+        void earL.getBBox();
+        earL.classList.add('twitch');
+        say(greeted ? clickLine() : greetingLine());
+        greeted = true;
+      });
+
+      el.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); }
+      });
+
+      // Notice the mode switch — Pip comments the first time you flip it
+      let sawModeSwitch = false;
+      const modeBtn = document.getElementById('modeSwitch');
+      if (modeBtn) {
+        modeBtn.addEventListener('click', () => {
+          if (sawModeSwitch) return;
+          sawModeSwitch = true;
+          setTimeout(() => {
+            say(document.body.classList.contains('film-mode') ? "oh, the other side of him" : "back to the engineer side", 2800);
+          }, 650);
+        });
+      }
+
+      // Unprompted nudge if you've been reading a while without touching Pip
+      setTimeout(() => {
+        if (!greeted) { greeted = true; say(pickFresh(["psst — down here", "I've been waving for a bit"]), 2600); }
+      }, 14000);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', initPip);
+    } else {
+      initPip();
+    }
+
     // ─── HEADER SHADOW ON SCROLL ───
     window.addEventListener('scroll', () => {
       header.classList.toggle('scrolled', window.scrollY > 10);
@@ -2064,5 +2380,28 @@
       if (localStorage.getItem('tbk-mode') === 'film') { isFilm = true; applyMode(true); }
     } catch (e) {}
   </script>
+
+  <!-- ─── PIP ─── -->
+  <div class="pip" id="pip" role="button" tabindex="0" aria-label="Pip, a small companion — click to say hi">
+    <div class="pip-bubble" id="pipBubble"></div>
+    <svg class="pip-svg" viewBox="0 0 64 64" aria-hidden="true">
+      <ellipse class="pip-shadow" cx="32" cy="58" rx="15" ry="3"></ellipse>
+      <g class="pip-float">
+        <path class="pip-line pip-tail" d="M46 44 Q56 42 54 32" fill="none"></path>
+        <path class="pip-body-path pip-ear-l" id="pipEarL" d="M16 22 L13 9 Q13 6 17 8 L23 20 Z"></path>
+        <path class="pip-body-path pip-ear-r" d="M48 22 L51 9 Q51 6 47 8 L41 20 Z"></path>
+        <path class="pip-line" d="M17 18 L16 12" opacity="0.5"></path>
+        <path class="pip-line" d="M47 18 L48 12" opacity="0.5"></path>
+        <path class="pip-body-path" d="M32 12 C 44 12 50 21 50 30 C 50 40 45 47 32 47 C 19 47 14 40 14 30 C 14 21 20 12 32 12 Z"></path>
+        <g class="pip-eyes" id="pipEyes">
+          <circle class="pip-eye" cx="25" cy="30" r="2.3"></circle>
+          <circle class="pip-eye" cx="39" cy="30" r="2.3"></circle>
+        </g>
+        <path class="pip-line" d="M28 37 Q32 40 36 37" opacity="0.85"></path>
+        <path class="pip-line" d="M23 46 L22 50"></path>
+        <path class="pip-line" d="M41 46 L42 50"></path>
+      </g>
+    </svg>
+  </div>
 </body>
 </html>
